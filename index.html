@@ -130,7 +130,7 @@
             }
         }
 
-        /* Optimized Animated Blob Shapes - GPU Accelerated */
+        /* Animated Blob Shapes */
         .blob {
             position: absolute;
             border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
@@ -138,7 +138,6 @@
             opacity: 0.25;
             animation: blobMorph 30s ease-in-out infinite;
             will-change: transform, border-radius;
-            transform: translateZ(0); /* Force GPU acceleration */
         }
 
         .blob-1 {
@@ -184,25 +183,23 @@
             }
         }
 
-        /* Floating Particles - CSS Animation Only */
+        /* Floating Particles */
         .particle {
             position: absolute;
             border-radius: 50%;
             pointer-events: none;
-            opacity: 0.25;
-            will-change: transform;
-            animation: float 25s infinite ease-in-out;
-            transform: translateZ(0); /* Force GPU acceleration */
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) translateZ(0); }
-            25% { transform: translate(80px, -80px) translateZ(0); }
-            50% { transform: translate(-40px, -160px) translateZ(0); }
-            75% { transform: translate(-120px, -40px) translateZ(0); }
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, -100px) rotate(90deg); }
+            50% { transform: translate(-50px, -200px) rotate(180deg); }
+            75% { transform: translate(-150px, -50px) rotate(270deg); }
         }
 
-        /* Advanced Glassmorphism Effect - Optimized */
+        /* Advanced Glassmorphism Effect */
         .glass {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px) saturate(180%);
@@ -211,7 +208,6 @@
             box-shadow: 
                 0 8px 32px 0 rgba(31, 38, 135, 0.37),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-            transform: translateZ(0); /* GPU acceleration */
         }
 
         .glass-card {
@@ -223,13 +219,9 @@
                 0 8px 32px 0 rgba(0, 0, 0, 0.4),
                 inset 0 1px 1px rgba(255, 255, 255, 0.1),
                 0 0 40px rgba(14, 165, 233, 0.1);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                        box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                        border-color 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
-            transform: translateZ(0); /* GPU acceleration */
-            will-change: transform;
         }
 
         .glass-card::before {
@@ -248,7 +240,7 @@
         }
 
         .glass-card:hover {
-            transform: translate3d(0, -15px, 0) scale(1.03);
+            transform: translateY(-15px) scale(1.03);
             box-shadow: 
                 0 25px 80px 0 rgba(14, 165, 233, 0.5),
                 inset 0 1px 1px rgba(255, 255, 255, 0.2),
@@ -262,19 +254,16 @@
             transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* Optimized Scroll Animations - GPU Accelerated */
+        /* Scroll Animations */
         .scroll-animate {
             opacity: 0;
-            transform: translate3d(0, 50px, 0) scale(0.95);
-            transition: opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1),
-                        transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-            will-change: opacity, transform;
+            transform: translateY(50px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .scroll-animate.is-visible {
             opacity: 1;
-            transform: translate3d(0, 0, 0) scale(1);
-            will-change: auto;
+            transform: translateY(0) scale(1);
         }
 
         /* Delay for staggered animations */
@@ -551,29 +540,8 @@
         }
 
         /* Performance Optimizations */
-        .card-3d {
+        .card-3d, .glass-card, .glass {
             will-change: transform;
-            transform: translateZ(0); /* Force GPU acceleration */
-        }
-        
-        .card-3d:hover {
-            will-change: transform;
-        }
-        
-        .glass-card:hover {
-            will-change: transform;
-        }
-        
-        /* Reduce motion for users who prefer it */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
         }
 
         /* Text Reveal Animation */
@@ -1248,70 +1216,34 @@
                 document.body.style.cursor = 'default';
             }
 
-            // --- Optimized Magnetic Effect for Buttons and Links (exclude cards) ---
+            // --- Magnetic Effect for Buttons and Links (exclude cards) ---
             const magneticElements = document.querySelectorAll('a, button, .nav-link');
-            const magneticData = new Map();
-            let magneticRaf = null;
-            
             magneticElements.forEach(element => {
                 // Skip if it's inside a card (cards use 3D tilt instead)
                 if (element.closest('.card-3d')) return;
                 
-                let isHovering = false;
-                magneticData.set(element, { currentX: 0, currentY: 0, targetX: 0, targetY: 0 });
-                
-                element.addEventListener('mouseenter', () => {
-                    isHovering = true;
-                });
-                
-                element.addEventListener('mouseleave', () => {
-                    isHovering = false;
-                    const data = magneticData.get(element);
-                    data.targetX = 0;
-                    data.targetY = 0;
-                });
-                
                 element.addEventListener('mousemove', function(e) {
-                    if (!isHovering) return;
-                    
                     const rect = this.getBoundingClientRect();
                     const x = e.clientX - rect.left - rect.width / 2;
                     const y = e.clientY - rect.top - rect.height / 2;
                     
-                    const data = magneticData.get(element);
-                    data.targetX = x * 0.15;
-                    data.targetY = y * 0.15;
+                    const moveX = x * 0.2;
+                    const moveY = y * 0.2;
                     
-                    if (!magneticRaf) {
-                        magneticRaf = requestAnimationFrame(() => {
-                            magneticData.forEach((data, el) => {
-                                if (el.closest('.card-3d')) return;
-                                
-                                data.currentX += (data.targetX - data.currentX) * 0.3;
-                                data.currentY += (data.targetY - data.currentY) * 0.3;
-                                
-                                if (Math.abs(data.currentX) > 0.1 || Math.abs(data.currentY) > 0.1 || Math.abs(data.targetX) > 0.1 || Math.abs(data.targetY) > 0.1) {
-                                    el.style.transform = `translate3d(${data.currentX}px, ${data.currentY}px, 0) scale(1.02)`;
-                                }
-                            });
-                            
-                            magneticRaf = null;
-                        });
-                    }
+                    this.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translate(0, 0) scale(1)';
                 });
             });
 
-            // --- Optimized 3D Tilt Effect (Throttled for Performance) ---
+            // --- 3D Tilt Effect ---
             const cards3d = document.querySelectorAll('.card-3d');
-            let tiltRaf = null;
-            const tiltData = new Map();
+            let rafId = null;
             
-            cards3d.forEach((card, index) => {
+            cards3d.forEach(card => {
                 let isHovering = false;
-                let targetRotateX = 0, targetRotateY = 0;
-                let currentRotateX = 0, currentRotateY = 0;
-                
-                tiltData.set(card, { currentRotateX: 0, currentRotateY: 0, targetRotateX: 0, targetRotateY: 0 });
                 
                 card.addEventListener('mouseenter', () => {
                     isHovering = true;
@@ -1319,79 +1251,92 @@
                 
                 card.addEventListener('mouseleave', () => {
                     isHovering = false;
-                    targetRotateX = 0;
-                    targetRotateY = 0;
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+                    if (rafId) {
+                        cancelAnimationFrame(rafId);
+                        rafId = null;
+                    }
                 });
                 
                 card.addEventListener('mousemove', function(e) {
                     if (!isHovering) return;
                     
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    targetRotateX = (y - centerY) / 15;
-                    targetRotateY = (centerX - x) / 15;
-                    
-                    const data = tiltData.get(card);
-                    data.targetRotateX = targetRotateX;
-                    data.targetRotateY = targetRotateY;
-                    
-                    if (!tiltRaf) {
-                        tiltRaf = requestAnimationFrame(() => {
-                            cards3d.forEach(c => {
-                                const d = tiltData.get(c);
-                                d.currentRotateX += (d.targetRotateX - d.currentRotateX) * 0.2;
-                                d.currentRotateY += (d.targetRotateY - d.currentRotateY) * 0.2;
-                                
-                                if (Math.abs(d.currentRotateX) > 0.01 || Math.abs(d.currentRotateY) > 0.01 || Math.abs(d.targetRotateX) > 0.01 || Math.abs(d.targetRotateY) > 0.01) {
-                                    c.style.transform = `perspective(1000px) rotateX(${d.currentRotateX}deg) rotateY(${d.currentRotateY}deg) translateZ(15px)`;
-                                }
-                            });
+                    if (!rafId) {
+                        rafId = requestAnimationFrame(() => {
+                            const rect = card.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
                             
-                            tiltRaf = null;
+                            const centerX = rect.width / 2;
+                            const centerY = rect.height / 2;
+                            
+                            const rotateX = (y - centerY) / 12;
+                            const rotateY = (centerX - x) / 12;
+                            
+                            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+                            rafId = null;
                         });
                     }
                 });
             });
             
-            // --- Optimized Floating Particles (CSS-only for better performance) ---
+            // --- Floating Particles ---
             const particlesContainer = document.getElementById('particles-container');
-            // Use CSS animations only - much better performance
-            const particleCount = window.innerWidth > 768 ? 20 : 10; // Reduced particle count
+            const particleCount = 30;
+            const particles = [];
             
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
+            // Create particles
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 2 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                const colors = [
+                    'rgba(14, 165, 233, 0.4)',
+                    'rgba(6, 182, 212, 0.4)',
+                    'rgba(20, 184, 166, 0.4)',
+                ];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.background = color;
+                particle.style.boxShadow = `0 0 ${size * 1.5}px ${color}`;
+                
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                
+                particlesContainer.appendChild(particle);
+                particles.push({ element: particle, x, y, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 });
+            }
+            
+            // Simplified particle animation (only on desktop)
+            if (window.innerWidth > 768 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                let animationFrame;
+                
+                function animateParticles() {
+                    particles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        
+                        if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1;
+                        if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1;
+                        
+                        p.x = Math.max(0, Math.min(window.innerWidth, p.x));
+                        p.y = Math.max(0, Math.min(window.innerHeight, p.y));
+                        
+                        p.element.style.transform = `translate(${p.x}px, ${p.y}px)`;
+                    });
                     
-                    const size = Math.random() * 2 + 2;
-                    particle.style.width = size + 'px';
-                    particle.style.height = size + 'px';
-                    
-                    const x = Math.random() * 100;
-                    const y = Math.random() * 100;
-                    particle.style.left = x + '%';
-                    particle.style.top = y + '%';
-                    
-                    const colors = [
-                        'rgba(14, 165, 233, 0.3)',
-                        'rgba(6, 182, 212, 0.3)',
-                        'rgba(20, 184, 166, 0.3)',
-                    ];
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    particle.style.background = color;
-                    particle.style.boxShadow = `0 0 ${size * 2}px ${color}`;
-                    particle.style.willChange = 'transform';
-                    
-                    particle.style.animationDelay = Math.random() * 20 + 's';
-                    particle.style.animationDuration = (Math.random() * 10 + 20) + 's';
-                    
-                    particlesContainer.appendChild(particle);
+                    animationFrame = requestAnimationFrame(animateParticles);
                 }
+                
+                animationFrame = requestAnimationFrame(animateParticles);
             }
             
             // --- Mobile Menu ---
@@ -1455,30 +1400,16 @@
                 observer.observe(target);
             });
             
-            // --- Optimized Back to Top Button ---
+            // --- Back to Top Button ---
             const backToTopButton = document.getElementById('back-to-top');
-            let scrollRaf = null;
-            let lastScrollY = window.scrollY;
-            
+
             window.addEventListener('scroll', () => {
-                if (!scrollRaf) {
-                    scrollRaf = requestAnimationFrame(() => {
-                        const currentScrollY = window.scrollY;
-                        
-                        // Only update if scroll position changed significantly
-                        if (Math.abs(currentScrollY - lastScrollY) > 5) {
-                            if (currentScrollY > 300) {
-                                backToTopButton.classList.remove('opacity-0', 'translate-y-4');
-                                backToTopButton.classList.add('opacity-100');
-                            } else {
-                                backToTopButton.classList.add('opacity-0', 'translate-y-4');
-                                backToTopButton.classList.remove('opacity-100');
-                            }
-                            lastScrollY = currentScrollY;
-                        }
-                        
-                        scrollRaf = null;
-                    });
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'translate-y-4');
+                    backToTopButton.classList.add('opacity-100');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'translate-y-4');
+                    backToTopButton.classList.remove('opacity-100');
                 }
             }, { passive: true });
 
@@ -1516,29 +1447,23 @@
                 setTimeout(typeWriter, 500);
             }
 
-            // --- Optimized Scroll Parallax (Disabled for better performance) ---
-            // Parallax disabled - using CSS animations instead for smoother performance
-            // If you want parallax, uncomment below and remove blob animations from CSS
-            /*
-            let parallaxRaf = null;
-            let lastParallaxScroll = 0;
+            // --- Scroll Parallax ---
+            let ticking = false;
             window.addEventListener('scroll', () => {
-                if (!parallaxRaf) {
-                    parallaxRaf = requestAnimationFrame(() => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
                         const scrolled = window.pageYOffset;
-                        // Only update if scroll changed significantly
-                        if (Math.abs(scrolled - lastParallaxScroll) > 10) {
-                            document.querySelectorAll('.blob').forEach((blob, index) => {
-                                const speed = 0.1 + (index * 0.05);
-                                blob.style.transform = `translateY(${scrolled * speed}px)`;
-                            });
-                            lastParallaxScroll = scrolled;
-                        }
-                        parallaxRaf = null;
+                        
+                        document.querySelectorAll('.blob').forEach((blob, index) => {
+                            const speed = 0.2 + (index * 0.1);
+                            blob.style.transform = `translateY(${scrolled * speed}px)`;
+                        });
+                        
+                        ticking = false;
                     });
+                    ticking = true;
                 }
             }, { passive: true });
-            */
 
             // --- Add Ripple Effect to Buttons ---
             document.querySelectorAll('a, button').forEach(element => {
