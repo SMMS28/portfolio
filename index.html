@@ -86,6 +86,7 @@
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
+            overflow-y: scroll;
             cursor: none;
         }
 
@@ -103,7 +104,7 @@
             z-index: 1;
         }
 
-        /* Optimized Animated Mesh Gradient Background */
+        /* Optimized Animated Mesh Gradient Background with Unique Pattern */
         .gradient-bg {
             position: fixed;
             top: 0;
@@ -115,7 +116,8 @@
                 radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.12) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.12) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.12) 0px, transparent 50%);
+                radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
             background-size: 300% 300%;
             animation: meshGradient 25s ease infinite;
             will-change: background-position;
@@ -222,6 +224,9 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            background-image: 
+                linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, transparent 50%),
+                linear-gradient(225deg, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
         }
 
         .glass-card::before {
@@ -237,6 +242,24 @@
 
         .glass-card:hover::before {
             left: 100%;
+        }
+        
+        /* Unique Corner Accent */
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), transparent);
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .glass-card:hover::after {
+            opacity: 1;
         }
 
         .glass-card:hover {
@@ -343,11 +366,12 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Skill Badge Animation */
+        /* Unique Skill Badge Animation */
         .skill-badge {
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            border-radius: 20px;
         }
 
         .skill-badge::before {
@@ -363,6 +387,11 @@
 
         .skill-badge:hover::before {
             left: 100%;
+        }
+        
+        .skill-badge:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
         }
 
         /* Advanced 3D Card Effect with Tilt */
@@ -406,19 +435,29 @@
             50% { opacity: 1; }
         }
 
-        /* Shimmer Effect */
+        /* Enhanced Shimmer Effect */
         .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             background-size: 200% 100%;
             animation: shimmer 2s infinite;
         }
 
         @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+            0% { 
+                background-position: -200% 0;
+                left: -100%;
+            }
+            100% { 
+                background-position: 200% 0;
+                left: 100%;
+            }
+        }
+        
+        .animate-shimmer {
+            animation: shimmer 2s infinite;
         }
 
-        /* Navigation Glow */
+        /* Enhanced Navigation Glow with Unique Effect */
         .nav-link {
             position: relative;
         }
@@ -430,30 +469,108 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: linear-gradient(90deg, #0ea5e9, #06b6d4);
+            background: linear-gradient(90deg, #0ea5e9, #06b6d4, #14b8a6);
             transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
         }
 
         .nav-link:hover::after {
             width: 100%;
         }
+        
+        .nav-link::before {
+            content: '▸';
+            position: absolute;
+            left: -15px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            color: #0ea5e9;
+        }
+        
+        .nav-link:hover::before {
+            opacity: 1;
+            left: -10px;
+        }
 
-        /* Custom Scrollbar */
+        /* Hide Scrollbar - Keep Functionality */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 0px;
+            background: transparent;
         }
-
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
+        
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
         }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #0ea5e9, #06b6d4);
-            border-radius: 5px;
+        
+        html {
+            overflow: -moz-scrollbars-none; /* Old Firefox */
         }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #06b6d4, #14b8a6);
+        
+        /* Animated Grid Pattern Overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(14, 165, 233, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 165, 233, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.5;
+            animation: gridPulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Unique Section Divider */
+        .section-divider {
+            position: relative;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.5), rgba(6, 182, 212, 0.5), transparent);
+            margin: 80px auto;
+            max-width: 1200px;
+            overflow: visible;
+        }
+        
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(14, 165, 233, 0.6);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            background: rgba(14, 165, 233, 0.2);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        
+        .section-divider::before {
+            left: 10%;
+        }
+        
+        .section-divider::after {
+            right: 10%;
+        }
+        
+        @keyframes pulseDot {
+            0%, 100% { 
+                transform: translateY(-50%) scale(1);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: translateY(-50%) scale(1.3);
+                opacity: 1;
+            }
         }
 
         /* Floating Elements */
@@ -635,11 +752,36 @@
     <main>
         <!-- Section 1: Hero -->
         <section id="home" class="relative min-h-screen flex items-center justify-center py-24 sm:py-32 overflow-hidden">
-            <!-- Animated Background Circles -->
+            <!-- Unique Geometric Shapes -->
             <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <!-- Animated Background Circles -->
                 <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-500/20 rounded-full blur-3xl float-animation"></div>
                 <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl float-animation" style="animation-delay: 2s;"></div>
                 <div class="absolute top-1/2 left-1/2 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl float-animation" style="animation-delay: 4s;"></div>
+                
+                <!-- Unique Geometric Patterns -->
+                <div class="absolute top-0 left-0 w-full h-full">
+                    <div class="absolute top-20 right-20 w-32 h-32 border-2 border-sky-500/30 rotate-45 animate-pulse" style="animation-duration: 3s;"></div>
+                    <div class="absolute bottom-32 left-16 w-24 h-24 border-2 border-cyan-500/30 rotate-12 animate-pulse" style="animation-duration: 4s; animation-delay: 1s;"></div>
+                    <div class="absolute top-1/3 right-1/4 w-16 h-16 border-2 border-teal-500/30 -rotate-45 animate-pulse" style="animation-duration: 5s; animation-delay: 2s;"></div>
+                </div>
+                
+                <!-- Animated Lines -->
+                <svg class="absolute inset-0 w-full h-full opacity-20" style="z-index: -1;">
+                    <defs>
+                        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:rgba(14, 165, 233, 0.4);stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:rgba(6, 182, 212, 0.4);stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:rgba(20, 184, 166, 0.4);stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <line x1="0" y1="50%" x2="100%" y2="50%" stroke="url(#lineGradient)" stroke-width="1" opacity="0.3">
+                        <animate attributeName="opacity" values="0.2;0.5;0.2" dur="4s" repeatCount="indefinite"/>
+                    </line>
+                    <line x1="50%" y1="0" x2="50%" y2="100%" stroke="url(#lineGradient)" stroke-width="1" opacity="0.3">
+                        <animate attributeName="opacity" values="0.2;0.5;0.2" dur="5s" repeatCount="indefinite"/>
+                    </line>
+                </svg>
             </div>
             
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -694,6 +836,7 @@
 
         <!-- Section 2: About Me -->
         <section id="about" class="relative py-24 sm:py-32 overflow-hidden">
+            <div class="section-divider"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Section Title -->
                 <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-center mb-20 scroll-animate">
@@ -734,6 +877,7 @@
 
         <!-- Section 3: Technical Skills -->
         <section id="skills" class="relative py-24 sm:py-32 overflow-hidden">
+            <div class="section-divider"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-center mb-20 scroll-animate">
                     <span class="gradient-text">Technical Skills</span>
@@ -818,6 +962,7 @@
         
         <!-- Section 4: Key Projects -->
         <section id="projects" class="relative py-24 sm:py-32 overflow-hidden">
+            <div class="section-divider"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-center mb-20 scroll-animate">
                     <span class="gradient-text">Key Projects</span>
@@ -826,7 +971,9 @@
 
                     <!-- Project 1: Text Scam Detection -->
                     <div class="glass-card rounded-3xl overflow-hidden flex flex-col card-3d scroll-animate group">
-                        <div class="h-2 bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500"></div>
+                        <div class="h-2 bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style="width: 50%; animation: shimmer 2s infinite;"></div>
+                        </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <div class="mb-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-sky-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -845,7 +992,9 @@
 
                     <!-- Project 2: Humor Evaluation -->
                     <div class="glass-card rounded-3xl overflow-hidden flex flex-col card-3d scroll-animate delay-100 group">
-                        <div class="h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"></div>
+                        <div class="h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style="width: 50%; animation: shimmer 2s infinite;"></div>
+                        </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <div class="mb-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -864,7 +1013,9 @@
 
                     <!-- Project 3: ParaWeb -->
                     <div class="glass-card rounded-3xl overflow-hidden flex flex-col card-3d scroll-animate delay-200 group">
-                        <div class="h-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500"></div>
+                        <div class="h-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style="width: 50%; animation: shimmer 2s infinite;"></div>
+                        </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <div class="mb-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -883,7 +1034,9 @@
 
                     <!-- Project 4: Scandicart -->
                     <div class="glass-card rounded-3xl overflow-hidden flex flex-col card-3d scroll-animate delay-300 group">
-                        <div class="h-2 bg-gradient-to-r from-pink-500 via-rose-500 to-red-500"></div>
+                        <div class="h-2 bg-gradient-to-r from-pink-500 via-rose-500 to-red-500 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style="width: 50%; animation: shimmer 2s infinite;"></div>
+                        </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <div class="mb-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -903,7 +1056,9 @@
 
                     <!-- Project 5: Identity Management -->
                     <div class="glass-card rounded-3xl overflow-hidden flex flex-col card-3d scroll-animate delay-400 group">
-                        <div class="h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
+                        <div class="h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style="width: 50%; animation: shimmer 2s infinite;"></div>
+                        </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <div class="mb-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -922,7 +1077,9 @@
 
                     <!-- Project 6: SkillSwap -->
                     <div class="glass-card rounded-3xl overflow-hidden flex flex-col card-3d scroll-animate delay-500 group">
-                        <div class="h-2 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500"></div>
+                        <div class="h-2 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style="width: 50%; animation: shimmer 2s infinite;"></div>
+                        </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <div class="mb-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -945,6 +1102,7 @@
 
         <!-- Section 5: Professional Experience -->
         <section id="experience" class="relative py-24 sm:py-32 overflow-hidden">
+            <div class="section-divider"></div>
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-center mb-20 scroll-animate">
                     <span class="gradient-text">Professional Experience</span>
