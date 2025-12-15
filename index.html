@@ -41,34 +41,36 @@
         
         body {
             background-color: #050505;
-            height: 100vh;
-            overflow: hidden; /* Hide default scroll behavior */
+            min-height: 100vh;
             margin: 0;
             color: #ffffff;
             font-family: 'Outfit', sans-serif;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            overflow-y: scroll; /* FORCE SCROLLBAR */
         }
 
-        /* The Scroll Spacer - Gives the user something to scroll */
+        /* The Scroll Spacer - Gives the page height so we can scroll */
         #scroll-spacer {
             height: var(--depth); 
-            width: 100%;
+            width: 1px;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 10;
-            pointer-events: none; /* Let events pass for custom cursor, but scrollable */
+            z-index: -1;
+            pointer-events: none;
         }
 
-        /* Viewport - The Camera Lens */
+        /* Viewport - The Fixed Window we look through */
         #viewport {
-            perspective: 800px; /* Standard 3D perspective */
+            perspective: 1000px;
             position: fixed;
             width: 100%;
             height: 100%;
-            overflow: hidden;
             top: 0;
             left: 0;
+            overflow: hidden;
+            pointer-events: none; /* ALLOW CLICKS/SCROLL THROUGH THIS CONTAINER */
         }
 
         /* The World - Moves in 3D Space */
@@ -79,10 +81,10 @@
             height: 100%;
             top: 0;
             left: 0;
-            will-change: transform; /* Hint for GPU accel */
+            will-change: transform; 
         }
 
-        /* Sections in 3D Space */
+        /* Sections: They need pointer events back! */
         .section-3d {
             position: absolute;
             width: 100%;
@@ -92,7 +94,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            backface-visibility: hidden; /* Improve perf */
+            backface-visibility: hidden;
+            pointer-events: auto; /* Re-enable clicks on content */
         }
 
         /* Fade effects */
@@ -128,6 +131,7 @@
             display: flex;
             justify-content: space-between;
             mix-blend-mode: difference;
+            pointer-events: auto;
         }
         
         button.nav-link {
@@ -140,7 +144,6 @@
             font-size: 0.8rem;
             letter-spacing: 0.1em;
         }
-
     </style>
 </head>
 <body>
@@ -374,27 +377,17 @@
         function animate() {
             targetZ = window.scrollY;
             
-            // Smoothly interpolate currentZ to targetZ
-            // Factor 0.05 is the "weight" - lower is heavier/smoother
-            currentZ = lerp(currentZ, targetZ, 0.08);
-
-            // Move the world!
-            // We translate NEGATIVE currentZ to move world towards camera
-            // But wait, our sections are spaced at positive Z intervals (0, 1500, 3000)? 
-            // Standard Tunnel approach: Camera is at 0. As we scroll, we want to move FORWARD.
-            // Moving forward means the world moves BACKWARDS relative to us (negative Z).
-            // So translateZ should remain negative scaling with scroll.
+            // If the user says "not stopping", maybe the lerp is too loose or they just want direct control.
+            // Let's tighten the lerp to 0.1 for more responsiveness
+            currentZ = lerp(currentZ, targetZ, 0.1);
             
-            // Actually, for "flying through":
-            // Sections are at: 0, 1500, 3000, 4500.
-            // At Scroll 0: Camera at 0. Section 1 is visible.
-            // At Scroll 1500: Camera at 1500. Section 2 is visible (relative Z 0).
-            // So we need to translate the world by -currentZ.
+            // Snap to pixel to avoid jitter if needed, but smooth transform is better
+            // world.style.transform = `translateZ(${-currentZ}px)`; 
+            // Note: In 3D transforms, sometimes sub-pixel rendering helps smoothness.
             
-            world.style.transform = `translateZ(${-currentZ}px)`;
+            world.style.transform = `translate3d(0, 0, ${-currentZ}px)`;
 
             // Opacity & Blur Logic
-            // Based on distance from camera (relativeZ)
             sections.forEach(section => {
                 // Get the original Z position from inline style
                 const styleZ = parseInt(section.style.transform.replace('translateZ(', '').replace('px)', ''));
@@ -402,44 +395,38 @@
                 // Distance from camera
                 const dist = styleZ - currentZ; 
 
-                // Logic:
-                // dist = 0 -> In focus (Opacity 1)
-                // dist > 1000 -> Far away (Opacity < 1)
-                // dist < -500 -> Behind camera (Opacity 0)
-                
                 let opacity = 0;
                 let blur = 0;
-                let scale = 1;
                 let pointerEvents = 'none';
+                let visibility = 'hidden';
 
-                if (dist > -200 && dist < 1200) {
-                    // It's in the "visible zone"
+                // Visible range: -500 (behind) to +1500 (ahead)
+                if (dist > -500 && dist < 2000) {
+                    visibility = 'visible';
                     
-                    // Fade in coming from deep
+                    // Coming into view (depths 500 to 1500)
                     if (dist > 500) {
-                        opacity = 1 - ((dist - 500) / 700); // fade out from 500 to 1200
+                        opacity = 1 - ((dist - 500) / 1000); 
                     } 
-                    // Fade out passing camera
+                    // Passing camera (depths 200 to -200)
                     else if (dist < 200) {
+                        // Fade out faster
                         opacity = (dist + 200) / 400; 
-                        blur = (200 - dist) / 10;
+                        blur = (200 - dist) / 20;
                     } 
+                    // Sweet spot (200 to 500)
                     else {
                         opacity = 1;
-                        pointerEvents = 'all';
+                        pointerEvents = 'all'; 
                     }
                 }
 
                 section.style.opacity = Math.max(0, Math.min(1, opacity));
-                section.style.filter = `blur(${Math.max(0, blur)}px)`;
-                section.style.pointerEvents = pointerEvents;
+                if (blur > 0) section.style.filter = `blur(${blur}px)`;
+                else section.style.filter = 'none'; // Performance opt
                 
-                // Hide completely if too far or too behind to save GPU
-                if (opacity <= 0.01) {
-                     section.style.visibility = 'hidden';
-                } else {
-                     section.style.visibility = 'visible';
-                }
+                section.style.pointerEvents = pointerEvents;
+                section.style.visibility = visibility;
             });
 
             requestAnimationFrame(animate);
