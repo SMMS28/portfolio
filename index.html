@@ -178,11 +178,11 @@
     <nav>
         <div class="font-display font-bold text-2xl">MS.</div>
         <div class="hidden md:flex gap-8">
-            <!-- Updated ScrollTo links to match new spacing -->
-            <button onclick="scrollToZ(400)" class="nav-link hover:text-accent">Home</button>
-            <button onclick="scrollToZ(1600)" class="nav-link hover:text-accent">Skills</button>
-            <button onclick="scrollToZ(2800)" class="nav-link hover:text-accent">Work</button>
-            <button onclick="scrollToZ(4000)" class="nav-link hover:text-accent">Experience</button>
+            <!-- Updated ScrollTo links to match SAFE zones (Z-600) -->
+            <button onclick="scrollToZ(0)" class="nav-link hover:text-accent">Home</button>
+            <button onclick="scrollToZ(1000)" class="nav-link hover:text-accent">Skills</button>
+            <button onclick="scrollToZ(2200)" class="nav-link hover:text-accent">Work</button>
+            <button onclick="scrollToZ(3400)" class="nav-link hover:text-accent">Experience</button>
         </div>
         <div>
             <a href="mailto:smmsrao@gmail.com" class="nav-link hover:text-accent border-b border-white">Contact</a>
@@ -192,7 +192,7 @@
     <div id="viewport">
         <div id="world">
             
-            <!-- SECTION 1: HERO (Z = 400) - MOVED DEEPER -->
+            <!-- SECTION 1: HERO (Z = 400) -->
             <section class="section-3d" style="transform: translateZ(400px);">
                 <div class="max-w-6xl w-full px-6 grid md:grid-cols-2 gap-12 items-center">
                     <div>
@@ -350,12 +350,29 @@
         </div>
     </div>
 
-    <!-- Scroll Logic: FINAL STABLE -->
     <script>
         const world = document.getElementById('world');
         const sections = document.querySelectorAll('.section-3d');
         const grid = document.getElementById('grid');
         
+        // Navigation Targets (Content Z - 600 = Safe View Distance)
+        // If we stop 600px BEFORE the content, we see it perfectly. 
+        // If we stop AT 0, it might clip.
+        const targets = {
+            'home': 0,      // Content at 400. Dist 400.
+            'skills': 1000, // Content at 1600. Dist 600.
+            'work': 2200,   // Content at 2800. Dist 600.
+            'exp': 3400     // Content at 4000. Dist 600.
+        };
+
+        // Override nav buttons manually without replacing whole node (safer)
+        const buttons = document.querySelectorAll('nav button');
+        const keys = ['home', 'skills', 'work', 'exp'];
+        buttons.forEach((btn, idx) => {
+            btn.removeAttribute('onclick');
+            btn.onclick = () => scrollToZ(targets[keys[idx]]);
+        });
+
         let targetZ = 0;
         let currentZ = 0;
 
@@ -369,46 +386,44 @@
 
         function animate() {
             targetZ = window.scrollY;
-            
-            // Standard smooth scroll
             currentZ = lerp(currentZ, targetZ, 0.1); 
             
-            // Move world
             world.style.transform = `translate3d(0, 0, ${-currentZ}px)`;
-            
-            // Move Grid Floor
             grid.style.backgroundPositionY = `${currentZ * 0.5}px`;
 
             sections.forEach(section => {
                 const styleZ = parseInt(section.style.transform.replace('translateZ(', '').replace('px)', ''));
                 const dist = styleZ - currentZ; 
 
-                // VISIBILITY FIX:
-                // Range > -1000: Visible.
-                // We do NOT fade out when it gets close. We let it clip naturally only when it's BEHIND (-1000).
+                /*
+                   SAFE VISIBILITY LOGIC (Prevents Black Clipping)
+                   - Dist > 1500: Fade In (Far)
+                   - Dist 400 to 1500: Opacity 1.0 (Reading Zone)
+                   - Dist 0 to 400: Fade Out (The Exit Zone) -> Prevents clipping at Z=0
+                   - Dist < 0: Hidden
+                */
                 
-                let opacity = 1;
-                let pointerEvents = 'all'; 
+                let opacity = 0;
+                let pointerEvents = 'none';
 
-                // If it's way behind the camera (passed by 1000px), hide it
-                if (dist < -1000) {
-                    opacity = 0;
-                    pointerEvents = 'none';
-                }
-                // If it's way ahead (distant), fade it nicely (3000 -> 5000)
-                else if (dist > 3000) {
-                    opacity = 1 - ((dist - 3000) / 2000);
-                    pointerEvents = 'none';
-                }
-                // If it's right in front or passing (-1000 to 3000) -> SHOW IT.
-                else {
+                if (dist > 1500 && dist < 5000) {
+                    opacity = 1 - ((dist - 1500) / 2500); 
+                } 
+                else if (dist >= 400 && dist <= 1500) {
                     opacity = 1;
                     pointerEvents = 'all';
                 }
-
+                else if (dist > 0 && dist < 400) {
+                    // Linear fade out as we approach camera
+                    opacity = dist / 400; 
+                }
+                
                 section.style.opacity = Math.max(0, Math.min(1, opacity));
-                section.style.filter = 'none'; 
                 section.style.pointerEvents = pointerEvents;
+                
+                // Toggle visibility for performance
+                if (opacity < 0.01) section.style.visibility = 'hidden';
+                else section.style.visibility = 'visible';
             });
 
             requestAnimationFrame(animate);
