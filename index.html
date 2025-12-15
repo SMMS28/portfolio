@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mohan Sunkara | AI & ML Engineer</title>
-    <!-- Fonts -->
+    
+    <!-- Fonts: Inter (Body) + Space Grotesk (Headers) - professional, tech-focused combination -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn-tailwindcss.vercel.app/"></script>
@@ -16,120 +17,74 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
-                        display: ['Syne', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
                     },
                     colors: {
-                        background: '#050505',
-                        surface: '#0F0F0F',
-                        accent: '#CCFF00', /* Neon Lime */
-                        secondary: '#A1A1AA',
-                        'accent-dim': 'rgba(204, 255, 0, 0.1)',
+                        dark: '#0B0C10',
+                        surface: '#12141C',
+                        primary: '#3B82F6', /* Royal Blue */
+                        secondary: '#94A3B8', /* Slate 400 */
+                        accent: '#60A5FA', /* Blue 400 */
                     },
-                    animation: {
-                        'spin-slow': 'spin 12s linear infinite',
-                        'marquee': 'marquee 30s linear infinite',
-                        'marquee-reverse': 'marquee 30s linear infinite reverse',
-                    },
-                    keyframes: {
-                        marquee: {
-                            '0%': { transform: 'translateX(0%)' },
-                            '100%': { transform: 'translateX(-100%)' },
-                        }
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'hero-glow': 'conic-gradient(from 180deg at 50% 50%, #1e1b4b 0deg, #3B82F6 180deg, #1e1b4b 360deg)',
                     }
                 },
             },
         }
     </script>
-
+    
     <!-- Icons -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
     <style>
-        /* Base Styles */
-        :root {
-            --cursor-size: 20px;
-        }
-        
         body {
-            background-color: #050505;
-            color: #ffffff;
-            cursor: none; /* Custom cursor */
-            overflow-x: hidden;
+            background-color: #0B0C10;
+            color: #E2E8F0;
+            -webkit-font-smoothing: antialiased;
         }
 
-        ::selection {
-            background: #CCFF00;
-            color: #000;
+        /* Subtle Grid Background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
         }
 
-        /* Custom Cursor */
-        .cursor {
-            width: var(--cursor-size);
-            height: var(--cursor-size);
-            border: 1px solid #CCFF00;
-            background: rgba(204, 255, 0, 0.2);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background-color 0.3s, border-width 0.3s;
-            mix-blend-mode: difference;
-        }
-        
-        .cursor.hovered {
-            width: 60px;
-            height: 60px;
-            background-color: #CCFF00;
-            border-color: transparent;
-            opacity: 0.5;
+        /* Glass Cards for Professional Polish */
+        .glass-card {
+            background: rgba(18, 20, 28, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
         }
 
-        /* Grain Overlay */
-        .noise {
-            position: fixed;
-            top: 0;
+        .glass-card:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Navigation Link Hover */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0.04;
-            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+            background-color: #3B82F6;
+            transition: width 0.3s ease;
         }
-
-        /* Typography Utilities */
-        .text-outline {
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
-            color: transparent;
-            transition: all 0.5s ease;
-        }
-        
-        .text-outline:hover {
-            color: #CCFF00;
-            -webkit-text-stroke: 0px;
-        }
-
-        /* Layout Utilities */
-        .grid-bg {
-            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 80px 80px;
-        }
-
-        /* Smooth Fade In */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .fade-in-up.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .nav-link:hover::after {
+            width: 100%;
         }
 
         /* Scrollbar */
@@ -137,442 +92,431 @@
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #050505;
+            background: #0B0C10;
         }
         ::-webkit-scrollbar-thumb {
-            background: #333;
+            background: #334155;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #CCFF00;
+            background: #475569;
         }
 
-        /* Ticket/Card Styles */
-        .project-card {
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.02);
-            transition: all 0.4s ease;
-        }
-        
-        .project-card:hover {
-            border-color: #CCFF00;
-            background: rgba(255,255,255,0.05);
-            transform: translateY(-5px);
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .skill-tag {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 4px 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: #A1A1AA;
-            border-radius: 999px;
-            transition: all 0.3s;
+        /* Fade Up Animation */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
-        
-        .group:hover .skill-tag {
-            border-color: #CCFF00;
-            color: #CCFF00;
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
-<body class="antialiased selection:bg-accent selection:text-black">
+<body class="bg-dark selection:bg-primary selection:text-white">
 
-    <!-- Noise Overlay -->
-    <div class="noise"></div>
-
-    <!-- Custom Cursor -->
-    <div id="cursor" class="cursor hidden md:block"></div>
+    <!-- Subtle Background Elements -->
+    <div class="fixed inset-0 bg-grid pointer-events-none z-0"></div>
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference">
-        <a href="#home" class="text-3xl font-display font-black text-white tracking-tighter hover:text-accent transition-colors">MS<span class="text-accent">.</span></a>
-        
-        <div class="hidden md:flex gap-1 items-center bg-white/5 backdrop-blur-md px-2 py-2 rounded-full border border-white/10">
-            <a href="#about" class="px-6 py-2 rounded-full text-sm font-medium hover:bg-white/10 hover:text-accent transition-all">About</a>
-            <a href="#experience" class="px-6 py-2 rounded-full text-sm font-medium hover:bg-white/10 hover:text-accent transition-all">Experience</a>
-            <a href="#work" class="px-6 py-2 rounded-full text-sm font-medium hover:bg-white/10 hover:text-accent transition-all">Projects</a>
-            <a href="#education" class="px-6 py-2 rounded-full text-sm font-medium hover:bg-white/10 hover:text-accent transition-all">Education</a>
-        </div>
+    <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-dark/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="#home" class="text-xl font-display font-bold tracking-tight text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary"></span>
+                Mohan Sunkara
+            </a>
 
-        <a href="mailto:smmsrao@gmail.com" class="hidden sm:inline-block text-sm font-bold border border-white/20 px-6 py-2 rounded-full hover:bg-accent hover:text-black hover:border-accent transition-all">
-            GET IN TOUCH
-        </a>
+            <div class="hidden md:flex gap-8 items-center text-sm font-medium text-secondary">
+                <a href="#about" class="nav-link hover:text-white transition-colors">About</a>
+                <a href="#skills" class="nav-link hover:text-white transition-colors">Competencies</a>
+                <a href="#experience" class="nav-link hover:text-white transition-colors">Experience</a>
+                <a href="#projects" class="nav-link hover:text-white transition-colors">Projects</a>
+                <a href="#education" class="nav-link hover:text-white transition-colors">Education</a>
+            </div>
+
+            <a href="mailto:smmsrao@gmail.com" class="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-medium text-white transition-all flex items-center gap-2">
+                <ion-icon name="mail-outline"></ion-icon>
+                <span>Contact</span>
+            </a>
+        </div>
     </nav>
 
-    <main class="relative z-10 w-full overflow-hidden">
+    <main class="relative z-10 pt-20">
         
         <!-- Hero Section -->
-        <section id="home" class="min-h-screen flex flex-col justify-center px-6 md:px-20 relative pt-20">
-            <!-- Grid Background -->
-            <div class="absolute top-0 right-0 w-full h-full grid-bg opacity-20 pointer-events-none -z-10" 
-                 style="mask-image: radial-gradient(circle at center, black, transparent);"></div>
-            
-            <div class="max-w-7xl mx-auto w-full">
-                <div class="flex flex-col md:flex-row gap-12 items-end">
-                    <div class="w-full md:w-3/4">
-                        <p class="text-accent mb-4 font-mono tracking-widest text-sm uppercase fade-in-up">
-                             &lt; AI_ML_ENGINEER /&gt;
-                        </p>
-                        <h1 class="font-display font-bold text-7xl sm:text-8xl md:text-9xl tracking-tighter leading-[0.9] mb-8">
-                            <span class="block fade-in-up" style="transition-delay: 100ms;">MOHAN</span>
-                            <span class="block text-outline fade-in-up" style="transition-delay: 200ms;">SUNKARA</span>
-                        </h1>
-                        <p class="text-xl md:text-2xl text-secondary font-light max-w-2xl leading-relaxed fade-in-up" style="transition-delay: 300ms;">
-                            Specialize in <span class="text-white font-medium">Transformer Models</span>, <span class="text-white font-medium">System Architecture</span>, and bridging technical implementations with business needs.
-                        </p>
-                        
-                        <div class="mt-10 flex flex-wrap gap-4 fade-in-up" style="transition-delay: 400ms;">
-                            <a href="#work" class="px-8 py-4 bg-accent text-black font-bold rounded-sm hover:translate-x-1 transition-transform inline-flex items-center gap-2">
-                                VIEW SELECTED WORKS
-                                <ion-icon name="arrow-down-outline"></ion-icon>
-                            </a>
-                            <a href="https://github.com/SMMS28" target="_blank" class="px-8 py-4 border border-white/20 text-white font-bold rounded-sm hover:bg-white/10 transition-colors">
-                                GITHUB PROFILE
-                            </a>
+        <section id="home" class="min-h-[90vh] flex items-center px-6">
+            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="fade-up">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-6">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                        </span>
+                        Open to Opportunities
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-display font-bold text-white leading-tight mb-6">
+                        AI & ML <br>
+                        <span class="text-gradient">Engineer</span>
+                    </h1>
+                    <p class="text-lg text-secondary max-w-xl leading-relaxed mb-10">
+                        Bridging the gap between complex AI models and business value. 
+                        Specializing in <strong>Transformer Models</strong>, <strong>System Architecture</strong>, and secure <strong>Digital Solutions</strong>.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#projects" class="px-8 py-3.5 bg-primary hover:bg-blue-600 text-white font-semibold rounded-lg transition-all shadow-lg shadow-primary/25">
+                            View Projects
+                        </a>
+                        <a href="https://github.com/SMMS28" target="_blank" class="px-8 py-3.5 bg-surface hover:bg-white/5 border border-white/10 text-white font-semibold rounded-lg transition-all flex items-center gap-2">
+                            <ion-icon name="logo-github"></ion-icon> GitHub
+                        </a>
+                    </div>
+                </div>
+
+                <div class="relative fade-up" style="transition-delay: 200ms;">
+                    <!-- Professional Card Image Container -->
+                    <div class="relative z-10 bg-gradient-to-br from-surface to-dark p-2 rounded-2xl border border-white/10 shadow-2xl skew-y-1">
+                        <div class="aspect-[4/5] rounded-xl overflow-hidden relative">
+                             <img src="profile-photo.jpg" alt="Mohan Sunkara" class="object-cover w-full h-full hover:scale-105 transition-transform duration-700">
+                             <div class="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent opacity-60"></div>
+                             <div class="absolute bottom-6 left-6 right-6">
+                                <div class="bg-white/10 backdrop-blur-md border border-white/10 p-4 rounded-lg">
+                                    <p class="text-xs text-primary font-mono mb-1">CURRENTLY BASED IN</p>
+                                    <p class="text-white font-semibold flex items-center gap-2">
+                                        <ion-icon name="location-outline"></ion-icon> Karlskrona, Sweden
+                                    </p>
+                                </div>
+                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Decorative Element / Status -->
-                    <div class="w-full md:w-1/4 flex flex-col items-start md:items-end justify-end pb-4 fade-in-up" style="transition-delay: 500ms;">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-3 h-3 bg-accent rounded-full animate-pulse"></div>
-                            <span class="text-sm font-mono text-white/80">AVAILABLE FOR HIRE</span>
-                        </div>
-                        <p class="text-secondary text-right text-sm">Based in <span class="text-white">Karlskrona, Sweden</span></p>
+                    <!-- Background Decoration -->
+                    <div class="absolute -top-10 -right-10 w-64 h-64 bg-primary/20 blur-[80px] rounded-full -z-10"></div>
+                    <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-purple-500/10 blur-[80px] rounded-full -z-10"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats / Quick Info -->
+        <section class="border-y border-white/5 bg-surface/50">
+            <div class="max-w-7xl mx-auto px-6 py-12">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="flex flex-col gap-2">
+                        <span class="text-3xl font-bold text-white">2+</span>
+                        <span class="text-sm text-secondary uppercase tracking-wider">Years Experience</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <span class="text-3xl font-bold text-white">6+</span>
+                        <span class="text-sm text-secondary uppercase tracking-wider">Major Projects</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <span class="text-3xl font-bold text-white">MSc</span>
+                        <span class="text-sm text-secondary uppercase tracking-wider">Comp. Science</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <span class="text-3xl font-bold text-white">100%</span>
+                        <span class="text-sm text-secondary uppercase tracking-wider">Commitment</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Marquee Skills Section -->
-        <section class="py-16 border-y border-white/5 bg-surface overflow-hidden">
-            <div class="relative flex overflow-x-hidden group">
-                <div class="py-4 animate-marquee whitespace-nowrap flex gap-16 items-center">
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">Transformer Models</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">TensorFlow</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">Machine Learning</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">React & Node.js</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">System Architecture</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">Cloud Solutions</span>
-                    <span class="text-2xl text-accent">✦</span>
+        <!-- About & Core Competencies -->
+        <section id="skills" class="py-24 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-16 fade-up">
+                    <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-6">Technical Competencies</h2>
+                    <p class="text-secondary max-w-2xl text-lg">
+                        My expertise spans the full development lifecycle, from designing scalable architectures to implementing advanced ML models.
+                    </p>
                 </div>
-                 <!-- Duplicate for seamless loop -->
-                <div class="absolute top-0 py-4 animate-marquee whitespace-nowrap flex gap-16 items-center" style="left: 100%;">
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">Transformer Models</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">TensorFlow</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">Machine Learning</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">React & Node.js</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">System Architecture</span>
-                    <span class="text-2xl text-accent">✦</span>
-                    <span class="text-5xl font-display font-bold text-white/20 uppercase">Cloud Solutions</span>
-                    <span class="text-2xl text-accent">✦</span>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Technical Domain Cards -->
+                    <div class="glass-card p-8 rounded-2xl fade-up">
+                        <div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 mb-6">
+                            <ion-icon name="hardware-chip-outline" class="text-2xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">AI & Machine Learning</h3>
+                        <ul class="space-y-3 text-secondary text-sm">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div> Transformer Models (BERT, RoBERTa)</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div> TensorFlow & PyTorch</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div> ML System Design</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div> Synthetic Data Generation</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card p-8 rounded-2xl fade-up" style="transition-delay: 100ms;">
+                         <div class="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center text-purple-400 mb-6">
+                            <ion-icon name="code-slash-outline" class="text-2xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">System Development</h3>
+                        <ul class="space-y-3 text-secondary text-sm">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> Full-Stack (React, Node.js)</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> API Integration (REST)</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> Database Mgmt (SQL, NoSQL)</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> System Architecture</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card p-8 rounded-2xl fade-up" style="transition-delay: 200ms;">
+                         <div class="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-400 mb-6">
+                            <ion-icon name="shield-checkmark-outline" class="text-2xl"></ion-icon>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">Identity & Security</h3>
+                        <ul class="space-y-3 text-secondary text-sm">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Authorization Management</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Security Protocols</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Microsoft Power Platform</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Cloud Solutions</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Experience Section -->
-        <section id="experience" class="py-32 px-6 md:px-20 relative">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex items-end justify-between mb-20 fade-in-up">
-                    <h2 class="font-display font-bold text-5xl md:text-7xl">
-                        WORK <br><span class="text-accent text-outline hover:text-accent">EXPERIENCE</span>
-                    </h2>
-                </div>
+        <section id="experience" class="py-24 px-6 bg-surface/30">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-16 text-center fade-up">Professional Experience</h2>
 
-                <div class="grid grid-cols-1 gap-8">
-                    <!-- Job 1 -->
-                    <div class="group project-card p-8 md:p-12 fade-in-up">
-                        <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
-                            <div>
-                                <h3 class="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:text-accent transition-colors">Gen AI Specialist</h3>
-                                <p class="text-xl text-white/60">Wipro, Hyderabad</p>
+                <div class="relative border-l border-white/10 ml-6 space-y-16">
+                    
+                    <!-- Role 1 -->
+                    <div class="pl-12 relative fade-up">
+                        <div class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-dark border-2 border-primary"></div>
+                        <div class="glass-card p-8 rounded-2xl">
+                            <div class="flex flex-col md:flex-row md:justify-between mb-4">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white">Gen AI Specialist</h3>
+                                    <p class="text-primary font-medium">Wipro, Hyderabad</p>
+                                </div>
+                                <span class="text-sm text-secondary font-mono mt-2 md:mt-0 bg-white/5 px-3 py-1 rounded-full h-fit w-fit">May 2023 – June 2024</span>
                             </div>
-                            <div class="font-mono text-accent border border-accent/30 px-4 py-1 rounded-full text-sm">
-                                May 2023 – June 2024
-                            </div>
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <p class="text-secondary leading-relaxed">
-                                Led the design and implementation of AI-powered solutions to enhance enterprise systems. Developed secure identity management components utilizing advanced machine learning techniques. Managed seamless integration of diverse systems ensuring scalability and robust performance.
-                            </p>
-                            <ul class="text-secondary space-y-2 list-disc list-inside marker:text-accent">
-                                <li>Designed enterprise AI solutions aligning with business goals.</li>
-                                <li>Collaborated with cross-functional teams for IT solution alignment.</li>
-                                <li>Optimized resource allocation and project execution.</li>
+                            <ul class="space-y-3 text-secondary list-disc list-inside">
+                                <li>Led the design and implementation of AI-powered solutions to enhance enterprise systems.</li>
+                                <li>Developed secure identity management components utilizing advanced machine learning techniques.</li>
+                                <li>Managed seamless integration of diverse systems assuring scalability and fault tolerance.</li>
+                                <li>Collaborated with cross-functional teams to align IT solutions with strategic business objectives.</li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Job 2 -->
-                    <div class="group project-card p-8 md:p-12 fade-in-up">
-                         <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
-                            <div>
-                                <h3 class="text-3xl md:text-4xl font-bold text-white mb-2 group-hover:text-accent transition-colors">IT Systems Analyst</h3>
-                                <p class="text-xl text-white/60">Oasis Infobyte</p>
+                    <!-- Role 2 -->
+                    <div class="pl-12 relative fade-up">
+                         <div class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-dark border-2 border-secondary"></div>
+                         <div class="glass-card p-8 rounded-2xl">
+                             <div class="flex flex-col md:flex-row md:justify-between mb-4">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white">IT Systems Analyst</h3>
+                                    <p class="text-primary font-medium">Oasis Infobyte</p>
+                                </div>
+                                <span class="text-sm text-secondary font-mono mt-2 md:mt-0 bg-white/5 px-3 py-1 rounded-full h-fit w-fit">May 2023 – June 2023</span>
                             </div>
-                            <div class="font-mono text-white/40 border border-white/10 px-4 py-1 rounded-full text-sm">
-                                May 2023 – June 2023
-                            </div>
+                            <ul class="space-y-3 text-secondary list-disc list-inside">
+                                <li>Implemented state-of-the-art technical solutions for optimization.</li>
+                                <li>Utilized advanced analytical tools for diagnosing system issues and resolving complex problems.</li>
+                                <li>Worked collaboratively with infrastructure teams to maintain high system uptime.</li>
+                            </ul>
                         </div>
-                        <p class="text-secondary leading-relaxed max-w-4xl">
-                            Implemented state-of-the-art technical solutions to optimize system performance. Utilized advanced analytical tools for diagnosing issues and resolving complex problems. Worked with infrastructure teams ensuring system uptime and seamless security protocols.
-                        </p>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- Selected Works Section -->
-        <section id="work" class="py-32 px-6 md:px-20 bg-surface relative">
-            <!-- Background Decoration -->
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-accent to-transparent opacity-30"></div>
-            
+        <!-- Projects Grid -->
+        <section id="projects" class="py-24 px-6">
             <div class="max-w-7xl mx-auto">
-                <h2 class="font-display font-bold text-5xl md:text-7xl mb-24 fade-in-up">
-                    FEATURED <span class="text-accent">PROJECTS</span>
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-16 fade-up">Featured Projects</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
-                    <!-- Project 1 -->
-                    <div class="group project-card p-8 fade-in-up">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-accent text-2xl group-hover:scale-110 transition-transform">
-                                <ion-icon name="shield-checkmark"></ion-icon>
+                    <!-- Project Card Template -->
+                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col group fade-up">
+                        <div class="h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+                        <div class="p-8 flex-1 flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Text Scam Detection</h3>
+                            <p class="text-secondary text-sm mb-6 leading-relaxed flex-1">
+                                An advanced detection system using Transformer models (RoBERTa, BERT). Achieved 76% AUC by generating synthetic scam dialogues for data augmentation.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs font-medium text-white/70">
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Python</span>
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">BERT</span>
                             </div>
-                            <ion-icon name="arrow-forward-outline" class="text-2xl text-white/20 group-hover:text-accent -rotate-45 group-hover:rotate-0 transition-all duration-300"></ion-icon>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-3">AI-Based Text Scam Detection</h3>
-                        <p class="text-secondary text-sm mb-6 leading-relaxed">
-                            Bachelor's Thesis. Developed a detection system using <span class="text-white">RoBERTa & BERT</span> for multi-turn text message scams. Achieved 76% AUC using synthetic AI-created scam dialogues for data augmentation.
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="skill-tag">Python</span>
-                            <span class="skill-tag">Transformers</span>
-                            <span class="skill-tag">GenAI</span>
                         </div>
                     </div>
 
-                    <!-- Project 2 -->
-                    <div class="group project-card p-8 fade-in-up" style="transition-delay: 100ms;">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-accent text-2xl group-hover:scale-110 transition-transform">
-                                <ion-icon name="happy"></ion-icon>
+                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col group fade-up" style="transition-delay: 100ms;">
+                        <div class="h-2 bg-gradient-to-r from-pink-500 to-rose-600"></div>
+                        <div class="p-8 flex-1 flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">AI Humor Evaluation</h3>
+                            <p class="text-secondary text-sm mb-6 leading-relaxed flex-1">
+                                Framework for evaluating LLMs (Perplexity vs Cohere) in generating humor. Quantitative study revealed Perplexity (76% success) outperformed Cohere.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs font-medium text-white/70">
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">LLMs</span>
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Research</span>
                             </div>
-                            <ion-icon name="arrow-forward-outline" class="text-2xl text-white/20 group-hover:text-accent -rotate-45 group-hover:rotate-0 transition-all duration-300"></ion-icon>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-3">AI Humor Evaluation Framework</h3>
-                        <p class="text-secondary text-sm mb-6 leading-relaxed">
-                            Designed a framework to compare LLMs (Perplexity AI vs Cohere AI) in generating topic-specific humor. Conducted quantitative study finding Perplexity AI outperformed Cohere (76% vs 71%).
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="skill-tag">LLMs</span>
-                            <span class="skill-tag">Analysis</span>
-                            <span class="skill-tag">Research</span>
                         </div>
                     </div>
 
-                    <!-- Project 3 -->
-                    <div class="group project-card p-8 fade-in-up">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-accent text-2xl group-hover:scale-110 transition-transform">
-                                <ion-icon name="hardware-chip"></ion-icon>
+                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col group fade-up" style="transition-delay: 200ms;">
+                        <div class="h-2 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
+                        <div class="p-8 flex-1 flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">ParaWeb Library</h3>
+                            <p class="text-secondary text-sm mb-6 leading-relaxed flex-1">
+                                High-performance parallel computing library for Node.js. Implemented Map/Filter/Reduce abstractions using worker threads for multi-core processing.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs font-medium text-white/70">
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">TypeScript</span>
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Node.js</span>
                             </div>
-                            <ion-icon name="arrow-forward-outline" class="text-2xl text-white/20 group-hover:text-accent -rotate-45 group-hover:rotate-0 transition-all duration-300"></ion-icon>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-3">ParaWeb Parallel Computing</h3>
-                        <p class="text-secondary text-sm mb-6 leading-relaxed">
-                            Architected a high-performance library in TypeScript for Node.js. Implemented abstractions like Map, Filter, Reduce using worker threads for multi-core data processing.
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="skill-tag">TypeScript</span>
-                            <span class="skill-tag">Node.js</span>
-                            <span class="skill-tag">Parallelism</span>
                         </div>
                     </div>
 
-                    <!-- Project 4 -->
-                    <div class="group project-card p-8 fade-in-up" style="transition-delay: 100ms;">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-accent text-2xl group-hover:scale-110 transition-transform">
-                                <ion-icon name="cart"></ion-icon>
+                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col group fade-up">
+                        <div class="h-2 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+                        <div class="p-8 flex-1 flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Enterprise IAM System</h3>
+                            <p class="text-secondary text-sm mb-6 leading-relaxed flex-1">
+                                Secure identity access management solution. Improved security by 94% through robust authorization protocols and AI-enhanced measures.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs font-medium text-white/70">
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Security</span>
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">AI</span>
                             </div>
-                            <ion-icon name="arrow-forward-outline" class="text-2xl text-white/20 group-hover:text-accent -rotate-45 group-hover:rotate-0 transition-all duration-300"></ion-icon>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-3">Scandicart E-Commerce</h3>
-                        <p class="text-secondary text-sm mb-6 leading-relaxed">
-                            Full-stack marketplace using <span class="text-white">React & TypeScript</span>. Built a RESTful API with JWT auth, integrated SQLite and Firebase. Features dynamic themes and wishlist persistence.
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="skill-tag">React</span>
-                            <span class="skill-tag">Redux</span>
-                            <span class="skill-tag">Firebase</span>
                         </div>
                     </div>
 
-                    <!-- Project 5 -->
-                    <div class="group project-card p-8 fade-in-up">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-accent text-2xl group-hover:scale-110 transition-transform">
-                                <ion-icon name="lock-closed"></ion-icon>
+                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col group fade-up" style="transition-delay: 100ms;">
+                        <div class="h-2 bg-gradient-to-r from-orange-500 to-red-600"></div>
+                        <div class="p-8 flex-1 flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">Scandicart E-Commerce</h3>
+                            <p class="text-secondary text-sm mb-6 leading-relaxed flex-1">
+                                Full-stack marketplace with React, TS, and Node.js. Features dynamic themes, wishlist persistence, and JWT authentication with Firebase integration.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs font-medium text-white/70">
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">React</span>
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Firebase</span>
                             </div>
-                           <ion-icon name="arrow-forward-outline" class="text-2xl text-white/20 group-hover:text-accent -rotate-45 group-hover:rotate-0 transition-all duration-300"></ion-icon>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-3">Enterprise Identity Mgmt</h3>
-                        <p class="text-secondary text-sm mb-6 leading-relaxed">
-                            Developed a secure IAM solution. Improved system security by 94% through robust authorization protocols and AI-enhanced security measuring.
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="skill-tag">Security</span>
-                            <span class="skill-tag">IAM</span>
-                            <span class="skill-tag">AI</span>
                         </div>
                     </div>
 
-                     <!-- Project 6 -->
-                     <div class="group project-card p-8 fade-in-up" style="transition-delay: 100ms;">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-accent text-2xl group-hover:scale-110 transition-transform">
-                                <ion-icon name="people"></ion-icon>
+                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col group fade-up" style="transition-delay: 200ms;">
+                        <div class="h-2 bg-gradient-to-r from-violet-500 to-purple-600"></div>
+                        <div class="p-8 flex-1 flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">SkillSwap P2P</h3>
+                            <p class="text-secondary text-sm mb-6 leading-relaxed flex-1">
+                                P2P skill exchange platform. Features real-time chat via Socket.io, points-based economy, and secure SQLite database integration.
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs font-medium text-white/70">
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Socket.io</span>
+                                <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">React</span>
                             </div>
-                            <ion-icon name="arrow-forward-outline" class="text-2xl text-white/20 group-hover:text-accent -rotate-45 group-hover:rotate-0 transition-all duration-300"></ion-icon>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-3">SkillSwap P2P Network</h3>
-                        <p class="text-secondary text-sm mb-6 leading-relaxed">
-                            P2P skill exchange platform with React/Material-UI and Node.js. Features real-time chat via Socket.io and a points-based economy system.
-                        </p>
-                        <div class="flex flex-wrap gap-2 mt-auto">
-                            <span class="skill-tag">Socket.io</span>
-                            <span class="skill-tag">React</span>
-                            <span class="skill-tag">Express</span>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
 
-        <!-- Education Section -->
-        <section id="education" class="py-32 px-6 md:px-20 border-t border-white/5">
+        <!-- Education -->
+        <section id="education" class="py-24 px-6 bg-surface/30 border-t border-white/5">
             <div class="max-w-4xl mx-auto">
-                <h2 class="font-display font-bold text-5xl md:text-6xl mb-16 text-center fade-in-up">
-                    EDUCATION
-                </h2>
+                <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-16 text-center fade-up">Education & Certifications</h2>
                 
-                <div class="relative space-y-12 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/20 before:to-transparent">
-                    
-                    <!-- Edu 1 -->
-                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group fade-in-up">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shrink-0 z-10 group-hover:border-accent transition-colors">
-                            <div class="w-3 h-3 bg-accent rounded-full"></div>
+                <div class="grid gap-6">
+                    <div class="glass-card p-6 md:p-8 rounded-2xl flex items-center justify-between fade-up">
+                        <div class="flex items-center gap-6">
+                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white text-xl border border-white/10">
+                                <ion-icon name="school-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">MSc Computer Science</h3>
+                                <p class="text-secondary text-sm">Blekinge Institute of Technology, Sweden</p>
+                            </div>
                         </div>
-                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 project-card rounded-xl">
-                            <span class="font-mono text-accent text-xs mb-1 block">Currently Enrolled</span>
-                            <h3 class="text-xl font-bold text-white">MSc Computer Science</h3>
-                            <p class="text-white/60 text-sm">Blekinge Institute of Technology, Sweden</p>
-                        </div>
+                        <span class="text-xs font-mono text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">Current</span>
                     </div>
 
-                    <!-- Edu 2 -->
-                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group fade-in-up">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shrink-0 z-10 group-hover:border-white transition-colors">
-                            <div class="w-2 h-2 bg-white/50 rounded-full"></div>
+                    <div class="glass-card p-6 md:p-8 rounded-2xl flex items-center justify-between fade-up delay-100">
+                        <div class="flex items-center gap-6">
+                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white text-xl border border-white/10">
+                                <ion-icon name="school-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">BSc Computer Science</h3>
+                                <p class="text-secondary text-sm">Blekinge Institute of Technology, Sweden</p>
+                            </div>
                         </div>
-                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 project-card rounded-xl">
-                            <span class="font-mono text-secondary text-xs mb-1 block">June 2025</span>
-                            <h3 class="text-xl font-bold text-white">BSc Computer Science</h3>
-                            <p class="text-white/60 text-sm">Blekinge Institute of Technology, Sweden</p>
-                            <p class="text-secondary text-xs mt-2 italic">Thesis: Transformer-Based Text Scam Detection</p>
-                        </div>
+                        <span class="text-xs font-mono text-secondary bg-white/5 border border-white/10 px-3 py-1 rounded-full">2025</span>
                     </div>
 
-                    <!-- Edu 3 -->
-                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group fade-in-up">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 bg-[#050505] shadow md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shrink-0 z-10 group-hover:border-white transition-colors">
-                            <div class="w-2 h-2 bg-white/50 rounded-full"></div>
-                        </div>
-                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 project-card rounded-xl">
-                            <span class="font-mono text-secondary text-xs mb-1 block">June 2024</span>
-                            <h3 class="text-xl font-bold text-white">Bachelor's Engineering</h3>
-                            <p class="text-white/60 text-sm">University College of Engineering, Kakinada, India</p>
+                    <div class="glass-card p-6 md:p-8 rounded-2xl flex items-center justify-between fade-up delay-200">
+                        <div class="flex items-center gap-6">
+                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white text-xl border border-white/10">
+                                <ion-icon name="ribbon-outline"></ion-icon>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Advanced Certification in Data Science & AI</h3>
+                                <p class="text-secondary text-sm">IIT Madras</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Footer / Contact -->
-        <footer class="py-24 px-6 md:px-20 text-center relative overflow-hidden bg-white/5">
-             <div class="absolute inset-0 flex justify-center items-center pointer-events-none opacity-20">
-                <div class="w-[400px] h-[400px] bg-accent blur-[120px] rounded-full mix-blend-screen"></div>
-             </div>
-            
-            <div class="relative z-10 max-w-4xl mx-auto">
-                <p class="text-secondary mb-4 tracking-widest text-sm uppercase">What's Next?</p>
-                <h2 class="font-display text-5xl md:text-8xl font-black mb-12 tracking-tighter text-white hover:text-accent transition-colors duration-500 cursor-default">
-                    LET'S BUILD <br>THE FUTURE
-                </h2>
-                
-                <div class="flex flex-col md:flex-row justify-center items-center gap-6 mt-8">
-                    <a href="mailto:smmsrao@gmail.com" class="min-w-[200px] px-8 py-4 bg-accent text-black font-bold text-lg rounded-sm hover:scale-105 transition-transform flex items-center justify-center gap-2">
-                        <ion-icon name="mail"></ion-icon> EMAIL ME
+        <!-- Footer -->
+        <footer class="py-20 px-6 border-t border-white/5 bg-dark">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    <h3 class="text-2xl font-bold text-white mb-2">Mohan Sunkara</h3>
+                    <p class="text-secondary text-sm">AI Engineer & System Architect</p>
+                </div>
+
+                <div class="flex gap-6">
+                    <a href="mailto:smmsrao@gmail.com" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-primary hover:text-white transition-all">
+                        <ion-icon name="mail-outline"></ion-icon>
                     </a>
-                    <a href="https://github.com/SMMS28" target="_blank" class="min-w-[200px] px-8 py-4 border border-white text-white font-bold text-lg rounded-sm hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2">
-                        <ion-icon name="logo-github"></ion-icon> GITHUB
+                    <a href="https://github.com/SMMS28" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white hover:text-dark transition-all">
+                        <ion-icon name="logo-github"></ion-icon>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-[#0077b5] hover:text-white transition-all">
+                         <ion-icon name="logo-linkedin"></ion-icon>
                     </a>
                 </div>
 
-                <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between text-secondary text-sm font-mono">
-                    <p>&copy; 2025 Mohan Mukund Sai Sunkara</p>
-                    <p class="mt-2 md:mt-0">+46 764 312 157 | Karlskrona, Sweden</p>
+                <div class="text-right text-sm text-secondary">
+                    <p>+46 764 312 157</p>
+                    <p>Karlskrona, Sweden</p>
                 </div>
+            </div>
+            <div class="text-center text-xs text-white/20 mt-12 font-mono">
+                &copy; 2025 Mohan Mukund Sai Sunkara. All rights reserved.
             </div>
         </footer>
 
     </main>
 
-    <!-- Scripts -->
     <script>
-        // Custom Cursor Logic
-        const cursor = document.getElementById('cursor');
-        
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        const interactiveElements = document.querySelectorAll('a, button, .group, .project-card');
-        interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
-
-        // Intersection Observer for Animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
+        // Intersection Observer for Fade Up Animation
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1 });
 
-        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
