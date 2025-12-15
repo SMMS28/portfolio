@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn-tailwindcss.vercel.app/"></script>
@@ -25,544 +29,448 @@
                         accent: '#CCFF00', /* Neon Lime */
                         secondary: '#A1A1AA',
                     },
-                    animation: {
-                        'spin-slow': 'spin 12s linear infinite',
-                        'marquee': 'marquee 25s linear infinite',
-                    },
-                    keyframes: {
-                        marquee: {
-                            '0%': { transform: 'translateX(0%)' },
-                            '100%': { transform: 'translateX(-100%)' },
-                        }
-                    }
                 },
             },
         }
     </script>
-
-    <!-- Icons -->
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-
+    
     <style>
-        /* Base Styles */
         :root {
-            --cursor-size: 20px;
+            --depth: 8000px; /* Total scrollable depth */
         }
         
         body {
             background-color: #050505;
+            height: 100vh;
+            overflow: hidden; /* Hide default scroll behavior */
+            margin: 0;
             color: #ffffff;
-            cursor: none;
-            overflow-x: hidden;
+            font-family: 'Outfit', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        ::selection {
-            background: #CCFF00;
-            color: #000;
+        /* The Scroll Spacer - Gives the user something to scroll */
+        #scroll-spacer {
+            height: var(--depth); 
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            pointer-events: none; /* Let events pass for custom cursor, but scrollable */
         }
 
-        /* Custom Cursor */
-        .cursor {
-            width: var(--cursor-size);
-            height: var(--cursor-size);
-            border: 1px solid #CCFF00;
-            border-radius: 50%;
+        /* Viewport - The Camera Lens */
+        #viewport {
+            perspective: 800px; /* Standard 3D perspective */
             position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background-color 0.3s;
-            mix-blend-mode: difference;
-        }
-        
-        .cursor.hovered {
-            width: 50px;
-            height: 50px;
-            background-color: rgba(204, 255, 0, 0.1);
-            border-color: transparent;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
         }
 
-        /* Grain Overlay */
-        .noise {
+        /* The World - Moves in 3D Space */
+        #world {
+            transform-style: preserve-3d;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            will-change: transform; /* Hint for GPU accel */
+        }
+
+        /* Sections in 3D Space */
+        .section-3d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden; /* Improve perf */
+        }
+
+        /* Fade effects */
+        .fade-content {
+            transition: opacity 0.5s ease-out;
+        }
+
+        /* Custom Scrollbar hide */
+        ::-webkit-scrollbar { width: 0px; }
+
+        /* Typography */
+        .outline-text {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+            color: transparent;
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Navigation */
+        nav {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
+            width: 100%;
             z-index: 50;
-            opacity: 0.05;
-            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
-        }
-
-        /* Typography Utilities */
-        .text-outline {
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
-            color: transparent;
-            transition: all 0.5s ease;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            mix-blend-mode: difference;
         }
         
-        .text-outline:hover {
-            color: #CCFF00;
-            -webkit-text-stroke: 0px;
+        button.nav-link {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
         }
 
-        /* Layout Utilities */
-        .grid-bg {
-            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 100px 100px;
-        }
-
-        /* Image Reveal Effect */
-        .reveal-image {
-            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
-            transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
-        }
-        
-        .reveal-image.active {
-            clip-path: polygon(0 100%, 100% 100%, 100% 0, 0 0);
-        }
-        
-        /* Smooth Fade In */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1s ease, transform 1s ease;
-        }
-        
-        .fade-in-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Horizontal Scroll Hide */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* Magnetic Button Glow */
-        .btn-glow {
-            position: absolute;
-            width: 150%;
-            height: 150%;
-            background: radial-gradient(circle, rgba(204,255,0,0.4) 0%, rgba(0,0,0,0) 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            transition: transform 0.5s ease;
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        button:hover .btn-glow {
-            transform: translate(-50%, -50%) scale(1);
-        }
     </style>
 </head>
-<body class="antialiased selection:bg-accent selection:text-black">
+<body>
 
-    <!-- Noise Overlay -->
-    <div class="noise"></div>
+    <!-- Scroll Spacer creates the scrollbar height -->
+    <div id="scroll-spacer"></div>
 
-    <!-- Custom Cursor -->
-    <div id="cursor" class="cursor hidden md:block"></div>
-
-    <!-- Navigation (Minimal & Fixed) -->
-    <nav class="fixed top-0 left-0 w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference">
-        <a href="#home" class="text-2xl font-display font-bold text-white tracking-tighter hover:text-accent transition-colors">MS.</a>
-        
-        <div class="hidden md:flex gap-8 items-center bg-white/5 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
-            <a href="#about" class="text-sm font-medium hover:text-accent transition-colors">About</a>
-            <a href="#work" class="text-sm font-medium hover:text-accent transition-colors">Work</a>
-            <a href="#skills" class="text-sm font-medium hover:text-accent transition-colors">Skills</a>
-            <a href="#experience" class="text-sm font-medium hover:text-accent transition-colors">Experience</a>
+    <!-- Navigation -->
+    <nav>
+        <div class="font-display font-bold text-2xl">MS.</div>
+        <div class="hidden md:flex gap-8">
+            <button onclick="scrollToZ(0)" class="nav-link hover:text-accent">Home</button>
+            <button onclick="scrollToZ(1500)" class="nav-link hover:text-accent">Skills</button>
+            <button onclick="scrollToZ(3000)" class="nav-link hover:text-accent">Work</button>
+            <button onclick="scrollToZ(4500)" class="nav-link hover:text-accent">Experience</button>
         </div>
-
-        <a href="mailto:smmsrao@gmail.com" class="text-sm font-bold border-b border-white hover:border-accent hover:text-accent transition-all pb-0.5">
-            LET'S TALK
-        </a>
+        <div>
+            <a href="mailto:smmsrao@gmail.com" class="nav-link hover:text-accent border-b border-white">Contact</a>
+        </div>
     </nav>
 
-    <main class="relative z-10 w-full overflow-hidden">
-        
-        <!-- Hero Section -->
-        <section id="home" class="min-h-screen flex flex-col justify-center px-6 md:px-20 relative pt-20">
-            <div class="absolute top-0 right-0 w-1/2 h-full grid-bg opacity-30 pointer-events-none -z-10"></div>
+    <!-- 3D Viewport -->
+    <div id="viewport">
+        <div id="world">
             
-            <div class="max-w-7xl mx-auto w-full">
-                <p class="text-secondary mb-4 tracking-widest text-sm uppercase fade-in-up">Karlskrona, Sweden • +46 764 312 157</p>
-                <h1 class="font-display font-bold text-6xl md:text-9xl tracking-tight leading-[0.9] mb-8">
-                    <span class="block fade-in-up" style="transition-delay: 100ms;">MOHAN</span>
-                    <span class="block text-outline fade-in-up" style="transition-delay: 200ms;">SUNKARA</span>
-                </h1>
-                
-                <div class="flex flex-col md:flex-row gap-12 mt-12 items-start">
-                    <div class="w-full md:w-1/3 fade-in-up" style="transition-delay: 300ms;">
-                        <!-- Stylized Profile Image -->
-                        <div class="relative w-full aspect-square md:aspect-[3/4] overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 ease-in-out group">
-                            <img src="profile-photo.jpg" alt="Mohan Sunkara" class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute inset-0 border border-white/10 pointer-events-none"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="w-full md:w-2/3 flex flex-col justify-between h-full fade-in-up" style="transition-delay: 400ms;">
-                        <div class="max-w-2xl">
-                            <p class="text-xl md:text-3xl text-secondary font-light leading-relaxed">
-                                <span class="text-white font-medium">AI/ML Engineer & Full Stack Developer.</span> 
-                                Specializing in <span class="text-accent">Transformer Models</span>, <span class="text-accent">System Architecture</span>, and <span class="text-accent">Digital Solutions</span>. 
-                            </p>
-                            <p class="text-secondary mt-6 leading-relaxed">
-                                Accomplished IT professional bridging technical implementation with business needs. Expert in building secure, scalable AI models and identity management systems.
-                            </p>
-                            
-                            <div class="mt-12 flex flex-wrap gap-4">
-                                <a href="#work" class="px-8 py-4 bg-white text-black font-bold rounded-none hover:bg-accent transition-colors duration-300 flex items-center gap-2 group">
-                                    VIEW PROJECTS
-                                    <ion-icon name="arrow-forward" class="group-hover:translate-x-1 transition-transform"></ion-icon>
-                                </a>
-                                <a href="https://github.com/SMMS28" target="_blank" class="px-8 py-4 border border-white/20 text-white font-bold hover:bg-white/10 transition-colors duration-300">
-                                    GITHUB
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Mini Stats -->
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mt-20 border-t border-white/10 pt-8">
-                            <div>
-                                <h3 class="font-display text-4xl font-bold text-accent">2+</h3>
-                                <p class="text-secondary text-sm mt-1">Years Experience</p>
-                            </div>
-                            <div>
-                                <h3 class="font-display text-4xl font-bold text-white">8+</h3>
-                                <p class="text-secondary text-sm mt-1">Major Projects</p>
-                            </div>
-                            <div>
-                                <h3 class="font-display text-4xl font-bold text-white">MSc</h3>
-                                <p class="text-secondary text-sm mt-1">Computer Science</p>
-                            </div>
-                        </div>
+            <!-- SECTION 1: HERO (Z = 0) -->
+            <section class="section-3d" style="transform: translateZ(0px);">
+                <div class="max-w-6xl w-full px-6 grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <p class="text-accent tracking-widest uppercase mb-4 text-sm font-mono">Portfolio 2025</p>
+                        <h1 class="text-7xl md:text-9xl font-display font-bold leading-[0.85] mb-8">
+                           MOHAN<br>
+                           <span class="outline-text">SUNKARA</span>
+                        </h1>
+                        <p class="text-secondary text-xl md:text-2xl max-w-lg leading-relaxed">
+                            <span class="text-white">AI / ML Engineer.</span> Architecting the future with Transformer models and secure systems.
+                        </p>
+                        <div class="mt-8 text-sm font-mono text-white/50">SCROLL TO EXPLORE ↓</div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Marquee Skills Section -->
-        <section id="skills" class="py-20 border-t border-white/5 bg-surface overflow-hidden">
-            <div class="relative flex overflow-x-hidden">
-                <div class="py-12 animate-marquee whitespace-nowrap flex gap-12 items-center">
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white/5 uppercase">Machine Learning</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white uppercase">BERT/RoBERTa</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white/10 uppercase">TensorFlow</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white uppercase">React & Node.js</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white/10 uppercase">System Architecture</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white uppercase">Cloud Solutions</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white/10 uppercase">Security</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white uppercase">Python</span>
-                    <span class="text-4xl text-accent">✦</span>
-                </div>
-                <div class="absolute top-0 py-12 animate-marquee2 whitespace-nowrap flex gap-12 items-center" style="left: 100%;">
-                   <span class="text-6xl md:text-8xl font-display font-bold text-white/5 uppercase">Machine Learning</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white uppercase">BERT/RoBERTa</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white/10 uppercase">TensorFlow</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white uppercase">React & Node.js</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white/10 uppercase">System Architecture</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white uppercase">Cloud Solutions</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white/10 uppercase">Security</span>
-                    <span class="text-4xl text-accent">✦</span>
-                    <span class="text-6xl md:text-8xl font-display font-bold text-white uppercase">Python</span>
-                    <span class="text-4xl text-accent">✦</span>
-                </div>
-            </div>
-        </section>
+             <!-- PARTICLE FIELD 1 -->
+             <div class="section-3d pointer-events-none" style="transform: translateZ(400px);">
+                 <div class="text-9xl font-display font-bold outline-text opacity-10 blur-sm absolute top-10 left-10">AI</div>
+                 <div class="text-9xl font-display font-bold outline-text opacity-10 blur-sm absolute bottom-10 right-10">ML</div>
+             </div>
 
-        <!-- Selected Works -->
-        <section id="work" class="py-32 px-6 md:px-20">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-20 fade-in-up">
-                    <h2 class="font-display font-bold text-5xl md:text-7xl">
-                        SELECTED <br> <span class="text-accent">WORKS</span>
+            <!-- SECTION 2: SKILLS (Z = 1500) -->
+            <section class="section-3d" style="transform: translateZ(1500px);">
+                 <div class="max-w-7xl w-full px-6 text-center">
+                    <h2 class="text-5xl md:text-8xl font-display font-bold mb-12 uppercase tracking-tighter">
+                        Technical <span class="text-accent">Arsenal</span>
                     </h2>
-                    <p class="text-secondary max-w-md text-right mt-6 md:mt-0">
-                        A showcase of AI innovation, secure systems, and high-performance architecture.
-                    </p>
-                </div>
-
-                <div class="space-y-32">
-                    <!-- Project 1: Thesis -->
-                    <div class="group relative grid md:grid-cols-2 gap-12 items-center fade-in-up">
-                        <div class="border border-white/10 p-2 bg-white/5">
-                            <div class="aspect-video w-full bg-gradient-to-br from-gray-900 to-black relative overflow-hidden group-hover:border-accent/50 transition-colors">
-                                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-900/40 via-gray-900/0 to-transparent"></div>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <ion-icon name="chatbubbles-outline" class="text-8xl text-white/10 group-hover:text-accent group-hover:scale-110 transition-all duration-500"></ion-icon>
-                                </div>
-                                <div class="absolute bottom-4 left-4 font-mono text-xs text-accent">AI / SECURITY</div>
-                            </div>
-                        </div>
-                        <div>
-                            <span class="text-accent font-mono text-sm tracking-widest">01</span>
-                            <h3 class="font-display text-4xl md:text-5xl font-bold mt-2 mb-6 group-hover:text-accent transition-colors">AI-Based Text Scam Detection</h3>
-                            <p class="text-secondary text-lg leading-relaxed mb-8">
-                                Achieved 76% AUC with RoBERTa & BERT models for multi-turn scam detection. Enhanced performance using synthetic AI-generated dialogues and data augmentation techniques.
-                            </p>
-                            <ul class="flex flex-wrap gap-4 text-sm font-mono text-white/60 mb-8">
-                                <li class="border border-white/20 px-3 py-1 rounded-full">Transformers</li>
-                                <li class="border border-white/20 px-3 py-1 rounded-full">Synthetic Data</li>
-                                <li class="border border-white/20 px-3 py-1 rounded-full">Python</li>
-                            </ul>
-                            <a href="https://github.com/SMMS28/thesis-scam-detection" target="_blank" class="inline-flex items-center gap-2 text-white font-bold hover:text-accent transition-colors">
-                                VIEW CODE <ion-icon name="logo-github"></ion-icon>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Project 2: Scandicart -->
-                    <div class="group relative grid md:grid-cols-2 gap-12 items-center fade-in-up md:flex-row-reverse">
-                         <div class="order-2 md:order-1">
-                            <span class="text-accent font-mono text-sm tracking-widest">02</span>
-                            <h3 class="font-display text-4xl md:text-5xl font-bold mt-2 mb-6 group-hover:text-accent transition-colors">Scandicart E-Commerce</h3>
-                            <p class="text-secondary text-lg leading-relaxed mb-8">
-                                A full-stack marketplace developed with Agile methodologies. Features dynamic themes, wishlist persistence, and secure JWT authentication.
-                            </p>
-                            <ul class="flex flex-wrap gap-4 text-sm font-mono text-white/60 mb-8">
-                                <li class="border border-white/20 px-3 py-1 rounded-full">React</li>
-                                <li class="border border-white/20 px-3 py-1 rounded-full">TypeScript</li>
-                                <li class="border border-white/20 px-3 py-1 rounded-full">Firebase</li>
-                            </ul>
-                            <a href="https://github.com/SMMS28/Agile-Assignment" target="_blank" class="inline-flex items-center gap-2 text-white font-bold hover:text-accent transition-colors">
-                                VIEW CODE <ion-icon name="logo-github"></ion-icon>
-                            </a>
-                        </div>
-                        <div class="border border-white/10 p-2 bg-white/5 order-1 md:order-2">
-                            <div class="aspect-video w-full bg-gradient-to-br from-gray-900 to-black relative overflow-hidden">
-                                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-pink-900/40 via-gray-900/0 to-transparent"></div>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <ion-icon name="cart-outline" class="text-8xl text-white/10 group-hover:text-pink-500 group-hover:scale-110 transition-all duration-500"></ion-icon>
-                                </div>
-                                <div class="absolute bottom-4 left-4 font-mono text-xs text-pink-500">FULL STACK</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project 3: SkillSwap -->
-                    <div class="group relative grid md:grid-cols-2 gap-12 items-center fade-in-up">
-                        <div class="border border-white/10 p-2 bg-white/5">
-                            <div class="aspect-video w-full bg-gradient-to-br from-gray-900 to-black relative overflow-hidden">
-                                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-violet-900/40 via-gray-900/0 to-transparent"></div>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <ion-icon name="people-outline" class="text-8xl text-white/10 group-hover:text-violet-500 group-hover:scale-110 transition-all duration-500"></ion-icon>
-                                </div>
-                                <div class="absolute bottom-4 left-4 font-mono text-xs text-violet-500">P2P PLATFORM</div>
-                            </div>
-                        </div>
-                        <div>
-                            <span class="text-accent font-mono text-sm tracking-widest">03</span>
-                            <h3 class="font-display text-4xl md:text-5xl font-bold mt-2 mb-6 group-hover:text-accent transition-colors">SkillSwap Network</h3>
-                            <p class="text-secondary text-lg leading-relaxed mb-8">
-                                Architected a peer-to-peer skill exchange platform with Real-time communication via Socket.io and a points-based economy system.
-                            </p>
-                            <ul class="flex flex-wrap gap-4 text-sm font-mono text-white/60 mb-8">
-                                <li class="border border-white/20 px-3 py-1 rounded-full">MERN Stack</li>
-                                <li class="border border-white/20 px-3 py-1 rounded-full">Socket.io</li>
-                                <li class="border border-white/20 px-3 py-1 rounded-full">Real-time</li>
-                            </ul>
-                            <a href="https://github.com/SMMS28/SKILLSWAP" target="_blank" class="inline-flex items-center gap-2 text-white font-bold hover:text-accent transition-colors">
-                                VIEW CODE <ion-icon name="logo-github"></ion-icon>
-                            </a>
-                        </div>
-                    </div>
-
-                     <!-- Project 4: ParaWeb -->
-                     <div class="group relative grid md:grid-cols-2 gap-12 items-center fade-in-up md:flex-row-reverse">
-                        <div class="order-2 md:order-1">
-                           <span class="text-accent font-mono text-sm tracking-widest">04</span>
-                           <h3 class="font-display text-4xl md:text-5xl font-bold mt-2 mb-6 group-hover:text-accent transition-colors">ParaWeb Library</h3>
-                           <p class="text-secondary text-lg leading-relaxed mb-8">
-                               A high-performance parallel computing library in TypeScript. Implements Map, Filter, Reduce using worker threads for massive data processing.
-                           </p>
-                           <ul class="flex flex-wrap gap-4 text-sm font-mono text-white/60 mb-8">
-                               <li class="border border-white/20 px-3 py-1 rounded-full">TypeScript</li>
-                               <li class="border border-white/20 px-3 py-1 rounded-full">Node.js Workers</li>
-                               <li class="border border-white/20 px-3 py-1 rounded-full">Systems</li>
-                           </ul>
-                           <span class="inline-flex items-center gap-2 text-white/40 font-bold cursor-not-allowed">
-                               INTERNAL PROJECT <ion-icon name="lock-closed-outline"></ion-icon>
-                           </span>
-                       </div>
-                       <div class="border border-white/10 p-2 bg-white/5 order-1 md:order-2">
-                           <div class="aspect-video w-full bg-gradient-to-br from-gray-900 to-black relative overflow-hidden">
-                               <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/40 via-gray-900/0 to-transparent"></div>
-                               <div class="absolute inset-0 flex items-center justify-center">
-                                   <ion-icon name="layers-outline" class="text-8xl text-white/10 group-hover:text-indigo-500 group-hover:scale-110 transition-all duration-500"></ion-icon>
-                               </div>
-                               <div class="absolute bottom-4 left-4 font-mono text-xs text-indigo-500">PERFORMANCE</div>
-                           </div>
-                       </div>
-                   </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- Experience & Education (Accordion / List Style) -->
-        <section id="experience" class="py-20 px-6 md:px-20 bg-surface">
-            <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-20">
-                
-                <!-- Experience -->
-                <div class="w-full md:w-1/2">
-                    <h3 class="font-display text-3xl font-bold mb-12 flex items-center gap-3">
-                        <span class="w-3 h-3 bg-accent rounded-full"></span> EXPERIENCE
-                    </h3>
                     
-                    <div class="space-y-12 border-l border-white/10 pl-8 relative">
-                        <!-- Job 1 -->
-                        <div class="relative fade-in-up">
-                            <div class="absolute -left-[37px] top-2 w-4 h-4 bg-black border-2 border-accent rounded-full"></div>
-                            <span class="text-accent text-sm font-mono mb-2 block">May 2023 – June 2024</span>
-                            <h4 class="text-2xl font-bold mb-1">Gen AI Specialist</h4>
-                            <p class="text-white/60 mb-4">Wipro, Hyderabad</p>
-                            <p class="text-secondary text-sm leading-relaxed mb-4">
-                                Led the design of AI-powered solutions to enhance enterprise systems. Developed secure identity management components, managed seamless system integration, and ensured security across all touchpoints.
-                            </p>
-                            <ul class="list-disc list-inside text-secondary text-xs space-y-1">
-                                <li>Aligned technical solutions with strategic business objectives.</li>
-                                <li>Implemented machine learning for data protection.</li>
-                            </ul>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
+                        <!-- Skill Box 1 -->
+                        <div class="border border-white/20 p-6 bg-black/50 backdrop-blur-sm">
+                            <div class="text-accent text-3xl mb-4"><ion-icon name="hardware-chip"></ion-icon></div>
+                            <h3 class="font-bold text-xl mb-2">Machine Learning</h3>
+                            <p class="text-sm text-secondary">TensorFlow, BERT, RoBERTa, LLMs, Synthetic Data Gen.</p>
                         </div>
-
-                        <!-- Job 2 -->
-                        <div class="relative fade-in-up" style="transition-delay: 100ms;">
-                            <div class="absolute -left-[37px] top-2 w-4 h-4 bg-black border-2 border-white/50 rounded-full"></div>
-                            <span class="text-white/50 text-sm font-mono mb-2 block">May 2023 – June 2023</span>
-                            <h4 class="text-2xl font-bold mb-1">IT Systems Analyst</h4>
-                            <p class="text-white/60 mb-4">Oasis Infobyte</p>
-                            <p class="text-secondary text-sm leading-relaxed">
-                                Implemented solutions for system optimization and operational efficiency. Utilized analytical tools for diagnosing complex issues and collaborated with infrastructure teams for high system uptime.
-                            </p>
+                         <!-- Skill Box 2 -->
+                         <div class="border border-white/20 p-6 bg-black/50 backdrop-blur-sm">
+                            <div class="text-accent text-3xl mb-4"><ion-icon name="code-slash"></ion-icon></div>
+                            <h3 class="font-bold text-xl mb-2">Development</h3>
+                            <p class="text-sm text-secondary">React 19, Node.js, TypeScript, Python, REST APIs.</p>
+                        </div>
+                         <!-- Skill Box 3 -->
+                         <div class="border border-white/20 p-6 bg-black/50 backdrop-blur-sm">
+                            <div class="text-accent text-3xl mb-4"><ion-icon name="shield-checkmark"></ion-icon></div>
+                            <h3 class="font-bold text-xl mb-2">Security</h3>
+                            <p class="text-sm text-secondary">Identity Mgmt, JWT Auth, Secure Protocols, System Integration.</p>
+                        </div>
+                         <!-- Skill Box 4 -->
+                         <div class="border border-white/20 p-6 bg-black/50 backdrop-blur-sm">
+                            <div class="text-accent text-3xl mb-4"><ion-icon name="cloud"></ion-icon></div>
+                            <h3 class="font-bold text-xl mb-2">Architecture</h3>
+                            <p class="text-sm text-secondary">Parallel Computing, Cloud Solutions, Microservices.</p>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Education & Certifications -->
-                <div class="w-full md:w-1/2">
-                    <h3 class="font-display text-3xl font-bold mb-12 flex items-center gap-3">
-                        <span class="w-3 h-3 bg-white rounded-full"></span> EDUCATION
-                    </h3>
+             <!-- SECTION 3: WORK (Z = 3000) -->
+            <section class="section-3d" style="transform: translateZ(3000px);">
+                <div class="max-w-7xl w-full px-6">
+                    <div class="flex justify-between items-end mb-12 border-b border-white/20 pb-8">
+                        <h2 class="text-5xl md:text-8xl font-display font-bold">SELECTED <span class="outline-text">WORKS</span></h2>
+                        <span class="text-accent font-mono">04 Featured Projects</span>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-16">
+                        <!-- Project 1 -->
+                        <div class="group">
+                             <div class="w-full aspect-video bg-[#111] overflow-hidden border border-white/10 relative mb-4">
+                                <div class="absolute inset-0 bg-gradient-to-tr from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div class="absolute bottom-4 left-4">
+                                    <ion-icon name="shield" class="text-4xl"></ion-icon>
+                                </div>
+                             </div>
+                             <h3 class="text-2xl font-bold">Text Scam Detection (Thesis)</h3>
+                             <p class="text-secondary text-sm my-2">76% AUC using RoBERTa & BERT models.</p>
+                             <a href="https://github.com/SMMS28/thesis-scam-detection" target="_blank" class="text-accent text-sm font-bold uppercase hover:underline">View Code</a>
+                        </div>
+
+                         <!-- Project 2 -->
+                         <div class="group">
+                            <div class="w-full aspect-video bg-[#111] overflow-hidden border border-white/10 relative mb-4">
+                               <div class="absolute inset-0 bg-gradient-to-tr from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                               <div class="absolute bottom-4 left-4">
+                                   <ion-icon name="cart" class="text-4xl"></ion-icon>
+                               </div>
+                            </div>
+                            <h3 class="text-2xl font-bold">Scandicart E-Commerce</h3>
+                            <p class="text-secondary text-sm my-2">Full-stack React/Node/Firebase marketplace.</p>
+                            <a href="https://github.com/SMMS28/Agile-Assignment" target="_blank" class="text-accent text-sm font-bold uppercase hover:underline">View Code</a>
+                       </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-16 mt-16">
+                        <!-- Project 3 -->
+                        <div class="group">
+                             <div class="w-full aspect-video bg-[#111] overflow-hidden border border-white/10 relative mb-4">
+                                <div class="absolute inset-0 bg-gradient-to-tr from-violet-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div class="absolute bottom-4 left-4">
+                                    <ion-icon name="people" class="text-4xl"></ion-icon>
+                                </div>
+                             </div>
+                             <h3 class="text-2xl font-bold">SkillSwap Network</h3>
+                             <p class="text-secondary text-sm my-2">P2P Learning Platform with Socket.io.</p>
+                             <a href="https://github.com/SMMS28/SKILLSWAP" target="_blank" class="text-accent text-sm font-bold uppercase hover:underline">View Code</a>
+                        </div>
+
+                         <!-- Project 4 -->
+                         <div class="group">
+                            <div class="w-full aspect-video bg-[#111] overflow-hidden border border-white/10 relative mb-4">
+                               <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                               <div class="absolute bottom-4 left-4">
+                                   <ion-icon name="layers" class="text-4xl"></ion-icon>
+                               </div>
+                            </div>
+                            <h3 class="text-2xl font-bold">ParaWeb Library</h3>
+                            <p class="text-secondary text-sm my-2">Parallel computing in Node.js.</p>
+                            <span class="text-white/40 text-sm font-bold uppercase">Internal Project</span>
+                       </div>
+                    </div>
+                </div>
+            </section>
+
+             <!-- SECTION 4: EXPERIENCE (Z = 4500) -->
+            <section class="section-3d" style="transform: translateZ(4500px);">
+                <div class="max-w-5xl w-full px-6">
+                    <h2 class="text-5xl md:text-8xl font-display font-bold mb-16 text-center">EXPERIENCE <span class="text-accent">&</span> EDU</h2>
                     
                     <div class="space-y-12">
-                        <div class="group fade-in-up">
-                            <h4 class="text-xl font-bold group-hover:text-accent transition-colors">Master's in Computer Science</h4>
-                            <p class="text-white/60">Blekinge Institute of Technology, Sweden</p>
-                            <span class="text-xs border border-white/20 px-2 py-1 rounded mt-2 inline-block">Currently Enrolled</span>
-                        </div>
-                        
-                        <div class="group fade-in-up">
-                            <h4 class="text-xl font-bold group-hover:text-accent transition-colors">Bachelor's in Computer Science</h4>
-                            <p class="text-white/60">Blekinge Institute of Technology, Sweden</p>
-                            <span class="text-xs border border-white/20 px-2 py-1 rounded mt-2 inline-block">June 2025</span>
-                            <p class="text-secondary text-xs mt-2 italic">Thesis: Transformer-Based Approach for Text Scam Detection</p>
+                        <!-- Timeline Item -->
+                        <div class="flex flex-col md:flex-row gap-8 border-l-2 border-accent/20 pl-8 relative">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 bg-accent rounded-full shadow-[0_0_15px_rgba(204,255,0,0.5)]"></div>
+                            <div class="md:w-1/3">
+                                <p class="text-accent font-bold">May 2023 – June 2024</p>
+                                <p class="text-white/60">Wipro, Hyderabad</p>
+                            </div>
+                            <div class="md:w-2/3">
+                                <h3 class="text-2xl font-bold text-white">Gen AI Specialist</h3>
+                                <p class="text-secondary mt-2">Led design of AI-powered enterprise solutions. Developed secure identity management with ML components.</p>
+                            </div>
                         </div>
 
-                         <div class="group fade-in-up">
-                            <h4 class="text-xl font-bold group-hover:text-accent transition-colors">Bachelor's in Engineering</h4>
-                            <p class="text-white/60">University College of Engineering, Kakinada, India</p>
-                            <span class="text-xs border border-white/20 px-2 py-1 rounded mt-2 inline-block">June 2024</span>
+                        <!-- Timeline Item -->
+                        <div class="flex flex-col md:flex-row gap-8 border-l-2 border-white/10 pl-8 relative">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 bg-white/20 rounded-full"></div>
+                            <div class="md:w-1/3">
+                                <p class="text-white font-bold">May 2023 – June 2023</p>
+                                <p class="text-white/60">Oasis Infobyte</p>
+                            </div>
+                            <div class="md:w-2/3">
+                                <h3 class="text-2xl font-bold text-white">IT Systems Analyst</h3>
+                                <p class="text-secondary mt-2">Implemented system optimization solutions and utilized analytical tools for diagnostics.</p>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Item: Edu -->
+                        <div class="flex flex-col md:flex-row gap-8 border-l-2 border-white/10 pl-8 relative mt-20">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 bg-white rounded-full"></div>
+                            <div class="md:w-1/3">
+                                <p class="text-white font-bold">Present</p>
+                                <p class="text-white/60">Blekinge Inst. Tech</p>
+                            </div>
+                            <div class="md:w-2/3">
+                                <h3 class="text-2xl font-bold text-white">MSc Computer Science</h3>
+                                <p class="text-secondary mt-2">Specializing in AI and Distributed Systems.</p>
+                                <div class="flex gap-2 mt-4">
+                                    <span class="px-3 py-1 bg-white/10 rounded-full text-xs">BSc Computer Science '25</span>
+                                    <span class="px-3 py-1 bg-white/10 rounded-full text-xs">B.Eng '24</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <h3 class="font-display text-3xl font-bold mb-8 mt-16 flex items-center gap-3">
-                        <span class="w-3 h-3 bg-white/50 rounded-full"></span> CERTIFICATIONS
-                    </h3>
-                    <div class="flex flex-wrap gap-3">
-                        <span class="px-4 py-2 border border-white/10 rounded-full text-xs hover:border-accent hover:text-accent transition-colors">Data Science & AI (IIT Madras)</span>
-                        <span class="px-4 py-2 border border-white/10 rounded-full text-xs hover:border-accent hover:text-accent transition-colors">Predictive Analytics (LinkedIn)</span>
-                        <span class="px-4 py-2 border border-white/10 rounded-full text-xs hover:border-accent hover:text-accent transition-colors">MS SQL Server Developer</span>
+                    
+                    <div class="mt-32 text-center pb-20">
+                        <a href="mailto:smmsrao@gmail.com" class="text-4xl md:text-6xl font-display font-bold hover:text-accent transition-colors underline decoration-1 decoration-accent/50 underline-offset-8">
+                            Let's Collaborate
+                        </a>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Call to Action / Footer -->
-        <footer class="py-32 px-6 md:px-20 text-center relative overflow-hidden">
-             <div class="absolute inset-0 flex justify-center items-center pointer-events-none opacity-20">
-                <div class="w-[500px] h-[500px] bg-accent blur-[150px] rounded-full"></div>
-             </div>
-            
-            <div class="relative z-10 max-w-4xl mx-auto">
-                <h2 class="font-display text-6xl md:text-9xl font-bold mb-8 tracking-tighter hover:tracking-wide transition-all duration-700 cursor-default">
-                    LET'S WORK <br>TOGETHER
-                </h2>
-                <div class="flex flex-col md:flex-row justify-center items-center gap-8 mt-16">
-                    <a href="mailto:smmsrao@gmail.com" class="px-10 py-5 bg-accent text-black font-bold text-lg rounded-full hover:scale-105 transition-transform">
-                        SEND AN EMAIL
-                    </a>
-                    <a href="https://github.com/SMMS28" target="_blank" class="px-10 py-5 border border-white text-white font-bold text-lg rounded-full hover:bg-white hover:text-black transition-all">
-                        VIEW GITHUB
-                    </a>
-                </div>
-                <div class="mt-20 pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between text-secondary text-sm">
-                    <p>&copy; 2025 Mohan Sunkara. Open to Opportunities.</p>
-                    <div class="flex gap-6 mt-4 md:mt-0">
-                        <a href="https://www.linkedin.com/" target="_blank" class="hover:text-white transition-colors">LinkedIn</a>
-                        <a href="https://github.com/SMMS28" class="hover:text-white transition-colors">GitHub</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        </div>
+    </div>
 
-    </main>
-
-    <!-- Scripts -->
+    <!-- Scroll Logic -->
     <script>
-        // Custom Cursor Logic
-        const cursor = document.getElementById('cursor');
+        const world = document.getElementById('world');
+        const sections = document.querySelectorAll('.section-3d');
+        const spacer = document.getElementById('scroll-spacer');
         
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
+        let targetZ = 0;
+        let currentZ = 0;
 
-        const interactiveElements = document.querySelectorAll('a, button, .group, .list-disc');
-        interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
+        // Custom lerp for smooth momentum
+        function lerp(start, end, factor) {
+            return start + (end - start) * factor;
+        }
 
-        // Intersection Observer for Fade In
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
+        function scrollToZ(val) {
+            window.scrollTo({ top: val, behavior: 'smooth' });
+        }
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    // observer.unobserve(entry.target); // Keep observing for re-entry if desired, or unobserve for single animate
+        // Main Animation Loop
+        function animate() {
+            targetZ = window.scrollY;
+            
+            // Smoothly interpolate currentZ to targetZ
+            // Factor 0.05 is the "weight" - lower is heavier/smoother
+            currentZ = lerp(currentZ, targetZ, 0.08);
+
+            // Move the world!
+            // We translate NEGATIVE currentZ to move world towards camera
+            // But wait, our sections are spaced at positive Z intervals (0, 1500, 3000)? 
+            // Standard Tunnel approach: Camera is at 0. As we scroll, we want to move FORWARD.
+            // Moving forward means the world moves BACKWARDS relative to us (negative Z).
+            // So translateZ should remain negative scaling with scroll.
+            
+            // Actually, for "flying through":
+            // Sections are at: 0, 1500, 3000, 4500.
+            // At Scroll 0: Camera at 0. Section 1 is visible.
+            // At Scroll 1500: Camera at 1500. Section 2 is visible (relative Z 0).
+            // So we need to translate the world by -currentZ.
+            
+            world.style.transform = `translateZ(${-currentZ}px)`;
+
+            // Opacity & Blur Logic
+            // Based on distance from camera (relativeZ)
+            sections.forEach(section => {
+                // Get the original Z position from inline style
+                const styleZ = parseInt(section.style.transform.replace('translateZ(', '').replace('px)', ''));
+                
+                // Distance from camera
+                const dist = styleZ - currentZ; 
+
+                // Logic:
+                // dist = 0 -> In focus (Opacity 1)
+                // dist > 1000 -> Far away (Opacity < 1)
+                // dist < -500 -> Behind camera (Opacity 0)
+                
+                let opacity = 0;
+                let blur = 0;
+                let scale = 1;
+                let pointerEvents = 'none';
+
+                if (dist > -200 && dist < 1200) {
+                    // It's in the "visible zone"
+                    
+                    // Fade in coming from deep
+                    if (dist > 500) {
+                        opacity = 1 - ((dist - 500) / 700); // fade out from 500 to 1200
+                    } 
+                    // Fade out passing camera
+                    else if (dist < 200) {
+                        opacity = (dist + 200) / 400; 
+                        blur = (200 - dist) / 10;
+                    } 
+                    else {
+                        opacity = 1;
+                        pointerEvents = 'all';
+                    }
+                }
+
+                section.style.opacity = Math.max(0, Math.min(1, opacity));
+                section.style.filter = `blur(${Math.max(0, blur)}px)`;
+                section.style.pointerEvents = pointerEvents;
+                
+                // Hide completely if too far or too behind to save GPU
+                if (opacity <= 0.01) {
+                     section.style.visibility = 'hidden';
+                } else {
+                     section.style.visibility = 'visible';
                 }
             });
-        }, observerOptions);
 
-        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize particle field
+        function createParticles() {
+            for(let i=0; i<50; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                
+                // Random position
+                const x = (Math.random() - 0.5) * window.innerWidth * 2;
+                const y = (Math.random() - 0.5) * window.innerHeight * 2;
+                const z = Math.random() * 6000; // Spread across depth
+                
+                const s = Math.random() * 3 + 1; // size
+                
+                p.style.width = s + 'px';
+                p.style.height = s + 'px';
+                p.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
+                p.style.opacity = Math.random() * 0.5;
+                
+                world.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // Start
+        animate();
+
     </script>
 </body>
 </html>
