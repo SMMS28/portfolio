@@ -27,7 +27,7 @@
                         background: '#0a0a0a',
                         surface: '#121212',
                         accent: '#CCFF00', /* Neon Lime */
-                        secondary: '#d4d4d8', /* Lighter gray for better readability */
+                        secondary: '#d4d4d8', 
                     },
                 },
             },
@@ -38,7 +38,6 @@
         :root {
             /* Reduced depth to make scrolling faster/less empty space */
             --depth: 5000px; 
-            --section-spacing: 1200px;
         }
         
         body {
@@ -52,7 +51,7 @@
             overflow-y: scroll;
         }
 
-        /* Ambient Background - Adds depth cues */
+        /* Ambient Background */
         .ambient-bg {
             position: fixed;
             top: 0;
@@ -62,7 +61,7 @@
             pointer-events: none;
             z-index: -2;
             background: 
-                radial-gradient(circle at 50% 50%, rgba(204, 255, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(204, 255, 0, 0.05) 0%, transparent 60%),
                 linear-gradient(to bottom, #050505 0%, #0a0a0a 100%);
         }
         
@@ -74,13 +73,12 @@
             width: 200%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            transform: perspective(500px) rotateX(60deg);
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(600px) rotateX(60deg);
             z-index: -1;
             pointer-events: none;
-            /* We will animate this with scroll */
         }
 
         #scroll-spacer {
@@ -94,7 +92,7 @@
         }
 
         #viewport {
-            perspective: 800px; /* Reduced perspective for flatter, more readable text */
+            perspective: 1000px; 
             position: fixed;
             width: 100%;
             height: 100%;
@@ -125,7 +123,6 @@
             justify-content: center;
             backface-visibility: hidden;
             pointer-events: auto;
-            /* Ensure text rendering is robust */
             transform-style: flat;
         }
 
@@ -165,9 +162,10 @@
 
         /* Improved Readability Classes */
         .glass-panel {
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(15, 15, 15, 0.95); /* Darker, less transp */
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -180,11 +178,11 @@
     <nav>
         <div class="font-display font-bold text-2xl">MS.</div>
         <div class="hidden md:flex gap-8">
-            <!-- Updated ScrollTo links to match new spacing (0, 1200, 2400, 3600) -->
-            <button onclick="scrollToZ(0)" class="nav-link hover:text-accent">Home</button>
-            <button onclick="scrollToZ(1200)" class="nav-link hover:text-accent">Skills</button>
-            <button onclick="scrollToZ(2400)" class="nav-link hover:text-accent">Work</button>
-            <button onclick="scrollToZ(3600)" class="nav-link hover:text-accent">Experience</button>
+            <!-- Updated ScrollTo links to match new spacing -->
+            <button onclick="scrollToZ(400)" class="nav-link hover:text-accent">Home</button>
+            <button onclick="scrollToZ(1600)" class="nav-link hover:text-accent">Skills</button>
+            <button onclick="scrollToZ(2800)" class="nav-link hover:text-accent">Work</button>
+            <button onclick="scrollToZ(4000)" class="nav-link hover:text-accent">Experience</button>
         </div>
         <div>
             <a href="mailto:smmsrao@gmail.com" class="nav-link hover:text-accent border-b border-white">Contact</a>
@@ -194,8 +192,8 @@
     <div id="viewport">
         <div id="world">
             
-            <!-- SECTION 1: HERO (Z = 0) -->
-            <section class="section-3d" style="transform: translateZ(0px);">
+            <!-- SECTION 1: HERO (Z = 400) - MOVED DEEPER -->
+            <section class="section-3d" style="transform: translateZ(400px);">
                 <div class="max-w-6xl w-full px-6 grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <p class="text-accent tracking-widest uppercase mb-4 text-sm font-mono font-bold">Portfolio 2025</p>
@@ -207,14 +205,14 @@
                             <span class="text-white font-medium">AI / ML Engineer.</span> Architecting the future with Transformer models and secure systems.
                         </p>
                         <div class="mt-12 text-sm font-mono text-white/50 border-l border-accent pl-4">
-                            SCROLL DOWN <br> TO ENTER THE NETWORK
+                            SCROLL TO ENTER <br> THE NETWORK
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- SECTION 2: SKILLS (Z = 1200) - Closer spacing -->
-            <section class="section-3d" style="transform: translateZ(1200px);">
+            <!-- SECTION 2: SKILLS (Z = 1600) -->
+            <section class="section-3d" style="transform: translateZ(1600px);">
                  <div class="max-w-7xl w-full px-6 text-center">
                     <h2 class="text-5xl md:text-8xl font-display font-bold mb-16 uppercase tracking-tighter text-white">
                         Technical <span class="text-accent">Stack</span>
@@ -245,8 +243,8 @@
                 </div>
             </section>
 
-             <!-- SECTION 3: WORK (Z = 2400) -->
-            <section class="section-3d" style="transform: translateZ(2400px);">
+             <!-- SECTION 3: WORK (Z = 2800) -->
+            <section class="section-3d" style="transform: translateZ(2800px);">
                 <div class="max-w-7xl w-full px-6">
                     <div class="flex justify-between items-end mb-12 border-b border-white/10 pb-6">
                         <h2 class="text-4xl md:text-7xl font-display font-bold text-white">SELECTED <span class="outline-text">PROJECTS</span></h2>
@@ -306,8 +304,8 @@
                 </div>
             </section>
 
-             <!-- SECTION 4: EXPERIENCE (Z = 3600) -->
-            <section class="section-3d" style="transform: translateZ(3600px);">
+             <!-- SECTION 4: EXPERIENCE (Z = 4000) -->
+            <section class="section-3d" style="transform: translateZ(4000px);">
                 <div class="max-w-4xl w-full px-6">
                     <h2 class="text-5xl md:text-8xl font-display font-bold mb-16 text-center text-white">EXPERIENCE</h2>
                     
@@ -352,7 +350,7 @@
         </div>
     </div>
 
-    <!-- Scroll Logic: STABILIZED -->
+    <!-- Scroll Logic: FINAL STABLE -->
     <script>
         const world = document.getElementById('world');
         const sections = document.querySelectorAll('.section-3d');
@@ -361,7 +359,6 @@
         let targetZ = 0;
         let currentZ = 0;
 
-        // Custom lerp - HEAVIER for stability, less jitter
         function lerp(start, end, factor) {
             return start + (end - start) * factor;
         }
@@ -370,66 +367,47 @@
             window.scrollTo({ top: val, behavior: 'smooth' });
         }
 
-        /* 
-           VISIBILITY LOGIC:
-           We removed the "Snap" because it felt forceful.
-           Instead, we ensure things are visible for a VERY long range.
-           Sections are spaced 1200px apart.
-           
-           Rules:
-           - Opacity should be 1.0 as long as the section is IN FRONT of the camera (dist > 0).
-           - Only fade out when it passes behind (dist < 0).
-           - Fade in from distance? No, keep it visible so user sees what's coming (maybe slight dim).
-        */
-
         function animate() {
             targetZ = window.scrollY;
             
-            // Standard smooth scroll (0.1 is good balance of smooth & responsive)
+            // Standard smooth scroll
             currentZ = lerp(currentZ, targetZ, 0.1); 
             
             // Move world
             world.style.transform = `translate3d(0, 0, ${-currentZ}px)`;
             
-            // Move Grid Floor purely for visual speed cue (loop it)
+            // Move Grid Floor
             grid.style.backgroundPositionY = `${currentZ * 0.5}px`;
 
             sections.forEach(section => {
-                // Get Z pos
                 const styleZ = parseInt(section.style.transform.replace('translateZ(', '').replace('px)', ''));
                 const dist = styleZ - currentZ; 
 
-                /* 
-                   NEW VISIBILITY:
-                   - If dist > 100: Fully Opaque (1.0). See it coming from far away.
-                   - If dist < 100 and > -500: Fade Effect (Passing camera).
-                   - If dist < -500: Hidden.
-                */
+                // VISIBILITY FIX:
+                // Range > -1000: Visible.
+                // We do NOT fade out when it gets close. We let it clip naturally only when it's BEHIND (-1000).
                 
                 let opacity = 1;
-                let blur = 0;
-                let pointerEvents = 'all'; // Default to interactive
+                let pointerEvents = 'all'; 
 
-                if (dist < 200) {
-                    // It is passing the camera or behind it
-                    // Fade out rapidly as it hits Z=0
-                    if (dist < 0) {
-                        opacity = 1 + (dist / 300); // Fades out by dist = -300
-                        blur = Math.abs(dist) / 10;
-                        pointerEvents = 'none';
-                    }
-                } 
-                // Distant fade (optional, to hide things 4000px away)
-                if (dist > 3000) {
-                    opacity = 1 - ((dist - 3000) / 1000);
+                // If it's way behind the camera (passed by 1000px), hide it
+                if (dist < -1000) {
+                    opacity = 0;
                     pointerEvents = 'none';
+                }
+                // If it's way ahead (distant), fade it nicely (3000 -> 5000)
+                else if (dist > 3000) {
+                    opacity = 1 - ((dist - 3000) / 2000);
+                    pointerEvents = 'none';
+                }
+                // If it's right in front or passing (-1000 to 3000) -> SHOW IT.
+                else {
+                    opacity = 1;
+                    pointerEvents = 'all';
                 }
 
                 section.style.opacity = Math.max(0, Math.min(1, opacity));
-                
-                if (blur > 0) section.style.filter = `blur(${blur}px)`;
-                else section.style.filter = 'none'; 
-                
+                section.style.filter = 'none'; 
                 section.style.pointerEvents = pointerEvents;
             });
 
