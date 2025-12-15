@@ -361,10 +361,15 @@
         const sections = document.querySelectorAll('.section-3d');
         const spacer = document.getElementById('scroll-spacer');
         
+        // Define fixed stops where content is perfectly visible
+        const stops = [0, 1500, 3000, 4500];
+        
         let targetZ = 0;
         let currentZ = 0;
+        let isScrolling = false;
+        let scrollTimer = null;
 
-        // Custom lerp for smooth momentum
+        // Custom lerp
         function lerp(start, end, factor) {
             return start + (end - start) * factor;
         }
@@ -372,49 +377,65 @@
         function scrollToZ(val) {
             window.scrollTo({ top: val, behavior: 'smooth' });
         }
+        
+        // Auto-Snap Logic
+        window.addEventListener('scroll', () => {
+            isScrolling = true;
+            clearTimeout(scrollTimer);
+            
+            // Snap after 100ms of no scrolling (debounce)
+            scrollTimer = setTimeout(() => {
+                isScrolling = false;
+                snapToNearest();
+            }, 100); 
+        }, { passive: true });
+
+        function snapToNearest() {
+            const current = window.scrollY;
+            
+            // Find closest stop
+            const closest = stops.reduce((prev, curr) => {
+                return (Math.abs(curr - current) < Math.abs(prev - current) ? curr : prev);
+            });
+            
+            // Snap if distance is meaningful (> 10px) to avoid micro-jitters
+            if (Math.abs(closest - current) > 10) {
+                window.scrollTo({ top: closest, behavior: 'smooth' });
+            }
+        }
 
         // Main Animation Loop
         function animate() {
             targetZ = window.scrollY;
             
-            // If the user says "not stopping", maybe the lerp is too loose or they just want direct control.
-            // Let's tighten the lerp to 0.1 for more responsiveness
-            currentZ = lerp(currentZ, targetZ, 0.1);
-            
-            // Snap to pixel to avoid jitter if needed, but smooth transform is better
-            // world.style.transform = `translateZ(${-currentZ}px)`; 
-            // Note: In 3D transforms, sometimes sub-pixel rendering helps smoothness.
+            // Allow smooth movement
+            currentZ = lerp(currentZ, targetZ, 0.1); 
             
             world.style.transform = `translate3d(0, 0, ${-currentZ}px)`;
 
-            // Opacity & Blur Logic
             sections.forEach(section => {
-                // Get the original Z position from inline style
                 const styleZ = parseInt(section.style.transform.replace('translateZ(', '').replace('px)', ''));
-                
-                // Distance from camera
                 const dist = styleZ - currentZ; 
 
+                // Visibility Logic - WIDENED SWEET SPOT
+                // Visible range: -500 to +3000
+                // Sweet spot (100% opacity): -100 to +800
+                
                 let opacity = 0;
                 let blur = 0;
                 let pointerEvents = 'none';
-                let visibility = 'hidden';
 
-                // Visible range: -500 (behind) to +1500 (ahead)
-                if (dist > -500 && dist < 2000) {
-                    visibility = 'visible';
-                    
-                    // Coming into view (depths 500 to 1500)
-                    if (dist > 500) {
-                        opacity = 1 - ((dist - 500) / 1000); 
+                if (dist > -500 && dist < 3000) { 
+                    // Coming into view (Fade in from 800 to 3000)
+                    if (dist > 800) {
+                        opacity = 1 - ((dist - 800) / 2200); 
                     } 
-                    // Passing camera (depths 200 to -200)
-                    else if (dist < 200) {
-                        // Fade out faster
-                        opacity = (dist + 200) / 400; 
-                        blur = (200 - dist) / 20;
+                    // Passing camera (Fade out from -100 to -500)
+                    else if (dist < -100) {
+                        opacity = (dist + 500) / 400; 
+                        blur = Math.abs(dist + 100) / 10;
                     } 
-                    // Sweet spot (200 to 500)
+                    // SWEET SPOT 
                     else {
                         opacity = 1;
                         pointerEvents = 'all'; 
@@ -422,42 +443,35 @@
                 }
 
                 section.style.opacity = Math.max(0, Math.min(1, opacity));
-                if (blur > 0) section.style.filter = `blur(${blur}px)`;
-                else section.style.filter = 'none'; // Performance opt
+                
+                if (blur > 0.5) section.style.filter = `blur(${blur}px)`;
+                else section.style.filter = 'none'; 
                 
                 section.style.pointerEvents = pointerEvents;
-                section.style.visibility = visibility;
             });
 
             requestAnimationFrame(animate);
         }
 
-        // Initialize particle field
+        // Initialize particles
         function createParticles() {
             for(let i=0; i<50; i++) {
                 const p = document.createElement('div');
                 p.classList.add('particle');
-                
-                // Random position
                 const x = (Math.random() - 0.5) * window.innerWidth * 2;
                 const y = (Math.random() - 0.5) * window.innerHeight * 2;
-                const z = Math.random() * 6000; // Spread across depth
-                
-                const s = Math.random() * 3 + 1; // size
-                
+                const z = Math.random() * 6000;
+                const s = Math.random() * 3 + 1; 
                 p.style.width = s + 'px';
                 p.style.height = s + 'px';
                 p.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
                 p.style.opacity = Math.random() * 0.5;
-                
                 world.appendChild(p);
             }
         }
         createParticles();
 
-        // Start
         animate();
-
     </script>
 </body>
 </html>
