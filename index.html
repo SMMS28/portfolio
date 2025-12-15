@@ -24,10 +24,10 @@
                         display: ['Syne', 'sans-serif'],
                     },
                     colors: {
-                        background: '#050505',
-                        surface: '#111111',
+                        background: '#0a0a0a',
+                        surface: '#121212',
                         accent: '#CCFF00', /* Neon Lime */
-                        secondary: '#A1A1AA',
+                        secondary: '#d4d4d8', /* Lighter gray for better readability */
                     },
                 },
             },
@@ -36,7 +36,9 @@
     
     <style>
         :root {
-            --depth: 8000px; /* Total scrollable depth */
+            /* Reduced depth to make scrolling faster/less empty space */
+            --depth: 5000px; 
+            --section-spacing: 1200px;
         }
         
         body {
@@ -47,33 +49,61 @@
             font-family: 'Outfit', sans-serif;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
-            overflow-y: scroll; /* FORCE SCROLLBAR */
+            overflow-y: scroll;
         }
 
-        /* The Scroll Spacer - Gives the page height so we can scroll */
+        /* Ambient Background - Adds depth cues */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(204, 255, 0, 0.03) 0%, transparent 50%),
+                linear-gradient(to bottom, #050505 0%, #0a0a0a 100%);
+        }
+        
+        /* 3D Grid Floor - Gives a sense of movement */
+        .grid-floor {
+            position: fixed;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg);
+            z-index: -1;
+            pointer-events: none;
+            /* We will animate this with scroll */
+        }
+
         #scroll-spacer {
             height: var(--depth); 
             width: 1px;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: -1;
+            z-index: -10;
             pointer-events: none;
         }
 
-        /* Viewport - The Fixed Window we look through */
         #viewport {
-            perspective: 1000px;
+            perspective: 800px; /* Reduced perspective for flatter, more readable text */
             position: fixed;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
             overflow: hidden;
-            pointer-events: none; /* ALLOW CLICKS/SCROLL THROUGH THIS CONTAINER */
+            pointer-events: none; 
         }
 
-        /* The World - Moves in 3D Space */
         #world {
             transform-style: preserve-3d;
             position: absolute;
@@ -84,7 +114,6 @@
             will-change: transform; 
         }
 
-        /* Sections: They need pointer events back! */
         .section-3d {
             position: absolute;
             width: 100%;
@@ -95,32 +124,20 @@
             align-items: center;
             justify-content: center;
             backface-visibility: hidden;
-            pointer-events: auto; /* Re-enable clicks on content */
+            pointer-events: auto;
+            /* Ensure text rendering is robust */
+            transform-style: flat;
         }
 
-        /* Fade effects */
-        .fade-content {
-            transition: opacity 0.5s ease-out;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
-        /* Custom Scrollbar hide */
-        ::-webkit-scrollbar { width: 0px; }
-
-        /* Typography */
         .outline-text {
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
             color: transparent;
         }
 
-        /* Particles */
-        .particle {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        /* Navigation */
         nav {
             position: fixed;
             top: 0;
@@ -143,29 +160,37 @@
             text-transform: uppercase;
             font-size: 0.8rem;
             letter-spacing: 0.1em;
+            transition: color 0.3s;
+        }
+
+        /* Improved Readability Classes */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 </head>
 <body>
 
-    <!-- Scroll Spacer creates the scrollbar height -->
+    <div class="ambient-bg"></div>
+    <div class="grid-floor" id="grid"></div>
     <div id="scroll-spacer"></div>
 
-    <!-- Navigation -->
     <nav>
         <div class="font-display font-bold text-2xl">MS.</div>
         <div class="hidden md:flex gap-8">
+            <!-- Updated ScrollTo links to match new spacing (0, 1200, 2400, 3600) -->
             <button onclick="scrollToZ(0)" class="nav-link hover:text-accent">Home</button>
-            <button onclick="scrollToZ(1500)" class="nav-link hover:text-accent">Skills</button>
-            <button onclick="scrollToZ(3000)" class="nav-link hover:text-accent">Work</button>
-            <button onclick="scrollToZ(4500)" class="nav-link hover:text-accent">Experience</button>
+            <button onclick="scrollToZ(1200)" class="nav-link hover:text-accent">Skills</button>
+            <button onclick="scrollToZ(2400)" class="nav-link hover:text-accent">Work</button>
+            <button onclick="scrollToZ(3600)" class="nav-link hover:text-accent">Experience</button>
         </div>
         <div>
             <a href="mailto:smmsrao@gmail.com" class="nav-link hover:text-accent border-b border-white">Contact</a>
         </div>
     </nav>
 
-    <!-- 3D Viewport -->
     <div id="viewport">
         <div id="world">
             
@@ -173,180 +198,152 @@
             <section class="section-3d" style="transform: translateZ(0px);">
                 <div class="max-w-6xl w-full px-6 grid md:grid-cols-2 gap-12 items-center">
                     <div>
-                        <p class="text-accent tracking-widest uppercase mb-4 text-sm font-mono">Portfolio 2025</p>
-                        <h1 class="text-7xl md:text-9xl font-display font-bold leading-[0.85] mb-8">
+                        <p class="text-accent tracking-widest uppercase mb-4 text-sm font-mono font-bold">Portfolio 2025</p>
+                        <h1 class="text-7xl md:text-9xl font-display font-bold leading-[0.9] mb-8 text-white">
                            MOHAN<br>
                            <span class="outline-text">SUNKARA</span>
                         </h1>
-                        <p class="text-secondary text-xl md:text-2xl max-w-lg leading-relaxed">
-                            <span class="text-white">AI / ML Engineer.</span> Architecting the future with Transformer models and secure systems.
+                        <p class="text-secondary text-xl md:text-2xl max-w-lg leading-relaxed font-light">
+                            <span class="text-white font-medium">AI / ML Engineer.</span> Architecting the future with Transformer models and secure systems.
                         </p>
-                        <div class="mt-8 text-sm font-mono text-white/50">SCROLL TO EXPLORE ↓</div>
+                        <div class="mt-12 text-sm font-mono text-white/50 border-l border-accent pl-4">
+                            SCROLL DOWN <br> TO ENTER THE NETWORK
+                        </div>
                     </div>
                 </div>
             </section>
 
-             <!-- PARTICLE FIELD 1 -->
-             <div class="section-3d pointer-events-none" style="transform: translateZ(400px);">
-                 <div class="text-9xl font-display font-bold outline-text opacity-10 blur-sm absolute top-10 left-10">AI</div>
-                 <div class="text-9xl font-display font-bold outline-text opacity-10 blur-sm absolute bottom-10 right-10">ML</div>
-             </div>
-
-            <!-- SECTION 2: SKILLS (Z = 1500) -->
-            <section class="section-3d" style="transform: translateZ(1500px);">
+            <!-- SECTION 2: SKILLS (Z = 1200) - Closer spacing -->
+            <section class="section-3d" style="transform: translateZ(1200px);">
                  <div class="max-w-7xl w-full px-6 text-center">
-                    <h2 class="text-5xl md:text-8xl font-display font-bold mb-12 uppercase tracking-tighter">
-                        Technical <span class="text-accent">Arsenal</span>
+                    <h2 class="text-5xl md:text-8xl font-display font-bold mb-16 uppercase tracking-tighter text-white">
+                        Technical <span class="text-accent">Stack</span>
                     </h2>
                     
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
-                        <!-- Skill Box 1 -->
-                        <div class="border border-white/20 p-6 bg-black/50 backdrop-blur-sm">
-                            <div class="text-accent text-3xl mb-4"><ion-icon name="hardware-chip"></ion-icon></div>
-                            <h3 class="font-bold text-xl mb-2">Machine Learning</h3>
-                            <p class="text-sm text-secondary">TensorFlow, BERT, RoBERTa, LLMs, Synthetic Data Gen.</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-left">
+                        <div class="glass-panel p-8 rounded-xl hover:border-accent/50 transition-colors">
+                            <div class="text-accent text-4xl mb-6"><ion-icon name="hardware-chip-outline"></ion-icon></div>
+                            <h3 class="font-bold text-xl mb-3 text-white">AI / ML</h3>
+                            <p class="text-sm text-secondary leading-relaxed">TensorFlow, PyTorch, BERT, RoBERTa, LLMs, RAG Pipelines.</p>
                         </div>
-                         <!-- Skill Box 2 -->
-                         <div class="border border-white/20 p-6 bg-black/50 backdrop-blur-sm">
-                            <div class="text-accent text-3xl mb-4"><ion-icon name="code-slash"></ion-icon></div>
-                            <h3 class="font-bold text-xl mb-2">Development</h3>
-                            <p class="text-sm text-secondary">React 19, Node.js, TypeScript, Python, REST APIs.</p>
+                         <div class="glass-panel p-8 rounded-xl hover:border-accent/50 transition-colors">
+                            <div class="text-accent text-4xl mb-6"><ion-icon name="code-slash-outline"></ion-icon></div>
+                            <h3 class="font-bold text-xl mb-3 text-white">Full Stack</h3>
+                            <p class="text-sm text-secondary leading-relaxed">React 18, Node.js, TypeScript, Next.js, Python FastAPI.</p>
                         </div>
-                         <!-- Skill Box 3 -->
-                         <div class="border border-white/20 p-6 bg-black/50 backdrop-blur-sm">
-                            <div class="text-accent text-3xl mb-4"><ion-icon name="shield-checkmark"></ion-icon></div>
-                            <h3 class="font-bold text-xl mb-2">Security</h3>
-                            <p class="text-sm text-secondary">Identity Mgmt, JWT Auth, Secure Protocols, System Integration.</p>
+                         <div class="glass-panel p-8 rounded-xl hover:border-accent/50 transition-colors">
+                            <div class="text-accent text-4xl mb-6"><ion-icon name="shield-checkmark-outline"></ion-icon></div>
+                            <h3 class="font-bold text-xl mb-3 text-white">Security</h3>
+                            <p class="text-sm text-secondary leading-relaxed">OAuth 2.0, JWT, Identity Mgmt, Secure System Design.</p>
                         </div>
-                         <!-- Skill Box 4 -->
-                         <div class="border border-white/20 p-6 bg-black/50 backdrop-blur-sm">
-                            <div class="text-accent text-3xl mb-4"><ion-icon name="cloud"></ion-icon></div>
-                            <h3 class="font-bold text-xl mb-2">Architecture</h3>
-                            <p class="text-sm text-secondary">Parallel Computing, Cloud Solutions, Microservices.</p>
+                         <div class="glass-panel p-8 rounded-xl hover:border-accent/50 transition-colors">
+                            <div class="text-accent text-4xl mb-6"><ion-icon name="cloud-outline"></ion-icon></div>
+                            <h3 class="font-bold text-xl mb-3 text-white">Cloud</h3>
+                            <p class="text-sm text-secondary leading-relaxed">AWS, Docker, Kubernetes, Microservices Architecture.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-             <!-- SECTION 3: WORK (Z = 3000) -->
-            <section class="section-3d" style="transform: translateZ(3000px);">
+             <!-- SECTION 3: WORK (Z = 2400) -->
+            <section class="section-3d" style="transform: translateZ(2400px);">
                 <div class="max-w-7xl w-full px-6">
-                    <div class="flex justify-between items-end mb-12 border-b border-white/20 pb-8">
-                        <h2 class="text-5xl md:text-8xl font-display font-bold">SELECTED <span class="outline-text">WORKS</span></h2>
-                        <span class="text-accent font-mono">04 Featured Projects</span>
+                    <div class="flex justify-between items-end mb-12 border-b border-white/10 pb-6">
+                        <h2 class="text-4xl md:text-7xl font-display font-bold text-white">SELECTED <span class="outline-text">PROJECTS</span></h2>
                     </div>
 
-                    <div class="grid md:grid-cols-2 gap-16">
+                    <div class="grid md:grid-cols-2 gap-12">
                         <!-- Project 1 -->
-                        <div class="group">
-                             <div class="w-full aspect-video bg-[#111] overflow-hidden border border-white/10 relative mb-4">
-                                <div class="absolute inset-0 bg-gradient-to-tr from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div class="absolute bottom-4 left-4">
-                                    <ion-icon name="shield" class="text-4xl"></ion-icon>
-                                </div>
+                        <div class="glass-panel p-6 rounded-2xl group hover:bg-white/5 transition-colors">
+                             <div class="flex justify-between items-start mb-6">
+                                 <h3 class="text-3xl font-display font-bold text-white group-hover:text-accent transition-colors">Text Scam Detection</h3>
+                                 <ion-icon name="shield" class="text-3xl text-white/20"></ion-icon>
                              </div>
-                             <h3 class="text-2xl font-bold">Text Scam Detection (Thesis)</h3>
-                             <p class="text-secondary text-sm my-2">76% AUC using RoBERTa & BERT models.</p>
-                             <a href="https://github.com/SMMS28/thesis-scam-detection" target="_blank" class="text-accent text-sm font-bold uppercase hover:underline">View Code</a>
+                             <p class="text-secondary mb-6 text-lg">Thesis project achieving 76% AUC using RoBERTa & BERT transformer models for fraud detection.</p>
+                             <a href="https://github.com/SMMS28/thesis-scam-detection" target="_blank" class="inline-flex items-center gap-2 text-white font-bold tracking-widest text-sm hover:text-accent hover:gap-4 transition-all uppercase">
+                                View Code <ion-icon name="arrow-forward"></ion-icon>
+                             </a>
                         </div>
 
                          <!-- Project 2 -->
-                         <div class="group">
-                            <div class="w-full aspect-video bg-[#111] overflow-hidden border border-white/10 relative mb-4">
-                               <div class="absolute inset-0 bg-gradient-to-tr from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                               <div class="absolute bottom-4 left-4">
-                                   <ion-icon name="cart" class="text-4xl"></ion-icon>
-                               </div>
+                         <div class="glass-panel p-6 rounded-2xl group hover:bg-white/5 transition-colors">
+                            <div class="flex justify-between items-start mb-6">
+                                <h3 class="text-3xl font-display font-bold text-white group-hover:text-pink-500 transition-colors">Scandicart</h3>
+                                <ion-icon name="cart" class="text-3xl text-white/20"></ion-icon>
                             </div>
-                            <h3 class="text-2xl font-bold">Scandicart E-Commerce</h3>
-                            <p class="text-secondary text-sm my-2">Full-stack React/Node/Firebase marketplace.</p>
-                            <a href="https://github.com/SMMS28/Agile-Assignment" target="_blank" class="text-accent text-sm font-bold uppercase hover:underline">View Code</a>
+                            <p class="text-secondary mb-6 text-lg">Robust E-Commerce platform built with React, Node.js, and Firebase. Full cart and payment flow.</p>
+                            <a href="https://github.com/SMMS28/Agile-Assignment" target="_blank" class="inline-flex items-center gap-2 text-white font-bold tracking-widest text-sm hover:text-accent hover:gap-4 transition-all uppercase">
+                               View Code <ion-icon name="arrow-forward"></ion-icon>
+                            </a>
                        </div>
                     </div>
 
-                    <div class="grid md:grid-cols-2 gap-16 mt-16">
+                    <div class="grid md:grid-cols-2 gap-12 mt-12">
                         <!-- Project 3 -->
-                        <div class="group">
-                             <div class="w-full aspect-video bg-[#111] overflow-hidden border border-white/10 relative mb-4">
-                                <div class="absolute inset-0 bg-gradient-to-tr from-violet-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                <div class="absolute bottom-4 left-4">
-                                    <ion-icon name="people" class="text-4xl"></ion-icon>
-                                </div>
-                             </div>
-                             <h3 class="text-2xl font-bold">SkillSwap Network</h3>
-                             <p class="text-secondary text-sm my-2">P2P Learning Platform with Socket.io.</p>
-                             <a href="https://github.com/SMMS28/SKILLSWAP" target="_blank" class="text-accent text-sm font-bold uppercase hover:underline">View Code</a>
-                        </div>
+                        <div class="glass-panel p-6 rounded-2xl group hover:bg-white/5 transition-colors">
+                            <div class="flex justify-between items-start mb-6">
+                                <h3 class="text-3xl font-display font-bold text-white group-hover:text-violet-500 transition-colors">SkillSwap</h3>
+                                <ion-icon name="people" class="text-3xl text-white/20"></ion-icon>
+                            </div>
+                            <p class="text-secondary mb-6 text-lg">Real-time P2P learning network using Socket.io for instant messaging and video.</p>
+                            <a href="https://github.com/SMMS28/SKILLSWAP" target="_blank" class="inline-flex items-center gap-2 text-white font-bold tracking-widest text-sm hover:text-accent hover:gap-4 transition-all uppercase">
+                               View Code <ion-icon name="arrow-forward"></ion-icon>
+                            </a>
+                       </div>
 
                          <!-- Project 4 -->
-                         <div class="group">
-                            <div class="w-full aspect-video bg-[#111] overflow-hidden border border-white/10 relative mb-4">
-                               <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                               <div class="absolute bottom-4 left-4">
-                                   <ion-icon name="layers" class="text-4xl"></ion-icon>
-                               </div>
+                         <div class="glass-panel p-6 rounded-2xl group hover:bg-white/5 transition-colors">
+                            <div class="flex justify-between items-start mb-6">
+                                <h3 class="text-3xl font-display font-bold text-white group-hover:text-indigo-500 transition-colors">ParaWeb Lib</h3>
+                                <ion-icon name="layers" class="text-3xl text-white/20"></ion-icon>
                             </div>
-                            <h3 class="text-2xl font-bold">ParaWeb Library</h3>
-                            <p class="text-secondary text-sm my-2">Parallel computing in Node.js.</p>
-                            <span class="text-white/40 text-sm font-bold uppercase">Internal Project</span>
+                            <p class="text-secondary mb-6 text-lg">High-performance parallel computing library for Node.js using Worker Threads.</p>
+                            <span class="inline-flex items-center gap-2 text-white/40 font-bold tracking-widest text-sm uppercase cursor-not-allowed">
+                               Internal <ion-icon name="lock-closed"></ion-icon>
+                            </span>
                        </div>
                     </div>
                 </div>
             </section>
 
-             <!-- SECTION 4: EXPERIENCE (Z = 4500) -->
-            <section class="section-3d" style="transform: translateZ(4500px);">
-                <div class="max-w-5xl w-full px-6">
-                    <h2 class="text-5xl md:text-8xl font-display font-bold mb-16 text-center">EXPERIENCE <span class="text-accent">&</span> EDU</h2>
+             <!-- SECTION 4: EXPERIENCE (Z = 3600) -->
+            <section class="section-3d" style="transform: translateZ(3600px);">
+                <div class="max-w-4xl w-full px-6">
+                    <h2 class="text-5xl md:text-8xl font-display font-bold mb-16 text-center text-white">EXPERIENCE</h2>
                     
-                    <div class="space-y-12">
-                        <!-- Timeline Item -->
-                        <div class="flex flex-col md:flex-row gap-8 border-l-2 border-accent/20 pl-8 relative">
-                            <div class="absolute -left-[9px] top-0 w-4 h-4 bg-accent rounded-full shadow-[0_0_15px_rgba(204,255,0,0.5)]"></div>
-                            <div class="md:w-1/3">
-                                <p class="text-accent font-bold">May 2023 – June 2024</p>
-                                <p class="text-white/60">Wipro, Hyderabad</p>
-                            </div>
-                            <div class="md:w-2/3">
+                    <div class="space-y-8">
+                        <!-- Card 1 -->
+                        <div class="glass-panel p-8 rounded-xl border-l-4 border-l-accent">
+                            <div class="flex flex-col md:flex-row justify-between mb-2">
                                 <h3 class="text-2xl font-bold text-white">Gen AI Specialist</h3>
-                                <p class="text-secondary mt-2">Led design of AI-powered enterprise solutions. Developed secure identity management with ML components.</p>
+                                <div class="text-accent font-mono font-bold">Wipro | 2023-2024</div>
                             </div>
+                            <p class="text-secondary">Designed and implemented AI-powered solutions for Fortune 500 clients. Specialized in secure identity management systems and LLM integrations.</p>
                         </div>
 
-                        <!-- Timeline Item -->
-                        <div class="flex flex-col md:flex-row gap-8 border-l-2 border-white/10 pl-8 relative">
-                            <div class="absolute -left-[9px] top-0 w-4 h-4 bg-white/20 rounded-full"></div>
-                            <div class="md:w-1/3">
-                                <p class="text-white font-bold">May 2023 – June 2023</p>
-                                <p class="text-white/60">Oasis Infobyte</p>
-                            </div>
-                            <div class="md:w-2/3">
+                         <!-- Card 2 -->
+                         <div class="glass-panel p-8 rounded-xl border-l-4 border-l-white/20">
+                            <div class="flex flex-col md:flex-row justify-between mb-2">
                                 <h3 class="text-2xl font-bold text-white">IT Systems Analyst</h3>
-                                <p class="text-secondary mt-2">Implemented system optimization solutions and utilized analytical tools for diagnostics.</p>
+                                <div class="text-white/60 font-mono font-bold">Oasis Infobyte | 2023</div>
                             </div>
+                            <p class="text-secondary">Optimized critical infrastructure and implemented diagnostic tools for system health monitoring.</p>
                         </div>
-
-                        <!-- Timeline Item: Edu -->
-                        <div class="flex flex-col md:flex-row gap-8 border-l-2 border-white/10 pl-8 relative mt-20">
-                            <div class="absolute -left-[9px] top-0 w-4 h-4 bg-white rounded-full"></div>
-                            <div class="md:w-1/3">
-                                <p class="text-white font-bold">Present</p>
-                                <p class="text-white/60">Blekinge Inst. Tech</p>
-                            </div>
-                            <div class="md:w-2/3">
+                        
+                        <!-- Education -->
+                        <div class="mt-12 pt-12 border-t border-white/10">
+                            <h3 class="text-3xl font-display font-bold mb-8 text-center text-white">EDUCATION</h3>
+                             <div class="glass-panel p-8 rounded-xl text-center">
                                 <h3 class="text-2xl font-bold text-white">MSc Computer Science</h3>
-                                <p class="text-secondary mt-2">Specializing in AI and Distributed Systems.</p>
-                                <div class="flex gap-2 mt-4">
-                                    <span class="px-3 py-1 bg-white/10 rounded-full text-xs">BSc Computer Science '25</span>
-                                    <span class="px-3 py-1 bg-white/10 rounded-full text-xs">B.Eng '24</span>
-                                </div>
+                                <p class="text-accent mt-1">Blekinge Institute of Technology</p>
+                                <p class="text-secondary text-sm mt-2">Specializing in AI & Distributed Systems</p>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="mt-32 text-center pb-20">
-                        <a href="mailto:smmsrao@gmail.com" class="text-4xl md:text-6xl font-display font-bold hover:text-accent transition-colors underline decoration-1 decoration-accent/50 underline-offset-8">
-                            Let's Collaborate
+                    <div class="mt-24 text-center pb-24">
+                        <a href="mailto:smmsrao@gmail.com" class="text-xl md:text-3xl font-display font-bold bg-white text-black px-8 py-4 rounded-full hover:bg-accent transition-colors">
+                            Let's Collaborate ->
                         </a>
                     </div>
                 </div>
@@ -355,21 +352,16 @@
         </div>
     </div>
 
-    <!-- Scroll Logic -->
+    <!-- Scroll Logic: STABILIZED -->
     <script>
         const world = document.getElementById('world');
         const sections = document.querySelectorAll('.section-3d');
-        const spacer = document.getElementById('scroll-spacer');
-        
-        // Define fixed stops where content is perfectly visible
-        const stops = [0, 1500, 3000, 4500];
+        const grid = document.getElementById('grid');
         
         let targetZ = 0;
         let currentZ = 0;
-        let isScrolling = false;
-        let scrollTimer = null;
 
-        // Custom lerp
+        // Custom lerp - HEAVIER for stability, less jitter
         function lerp(start, end, factor) {
             return start + (end - start) * factor;
         }
@@ -377,74 +369,65 @@
         function scrollToZ(val) {
             window.scrollTo({ top: val, behavior: 'smooth' });
         }
-        
-        // Auto-Snap Logic
-        window.addEventListener('scroll', () => {
-            isScrolling = true;
-            clearTimeout(scrollTimer);
-            
-            // Snap after 100ms of no scrolling (debounce)
-            scrollTimer = setTimeout(() => {
-                isScrolling = false;
-                snapToNearest();
-            }, 100); 
-        }, { passive: true });
 
-        function snapToNearest() {
-            const current = window.scrollY;
-            
-            // Find closest stop
-            const closest = stops.reduce((prev, curr) => {
-                return (Math.abs(curr - current) < Math.abs(prev - current) ? curr : prev);
-            });
-            
-            // Snap if distance is meaningful (> 10px) to avoid micro-jitters
-            if (Math.abs(closest - current) > 10) {
-                window.scrollTo({ top: closest, behavior: 'smooth' });
-            }
-        }
+        /* 
+           VISIBILITY LOGIC:
+           We removed the "Snap" because it felt forceful.
+           Instead, we ensure things are visible for a VERY long range.
+           Sections are spaced 1200px apart.
+           
+           Rules:
+           - Opacity should be 1.0 as long as the section is IN FRONT of the camera (dist > 0).
+           - Only fade out when it passes behind (dist < 0).
+           - Fade in from distance? No, keep it visible so user sees what's coming (maybe slight dim).
+        */
 
-        // Main Animation Loop
         function animate() {
             targetZ = window.scrollY;
             
-            // Allow smooth movement
+            // Standard smooth scroll (0.1 is good balance of smooth & responsive)
             currentZ = lerp(currentZ, targetZ, 0.1); 
             
+            // Move world
             world.style.transform = `translate3d(0, 0, ${-currentZ}px)`;
+            
+            // Move Grid Floor purely for visual speed cue (loop it)
+            grid.style.backgroundPositionY = `${currentZ * 0.5}px`;
 
             sections.forEach(section => {
+                // Get Z pos
                 const styleZ = parseInt(section.style.transform.replace('translateZ(', '').replace('px)', ''));
                 const dist = styleZ - currentZ; 
 
-                // Visibility Logic - WIDENED SWEET SPOT
-                // Visible range: -500 to +3000
-                // Sweet spot (100% opacity): -100 to +800
+                /* 
+                   NEW VISIBILITY:
+                   - If dist > 100: Fully Opaque (1.0). See it coming from far away.
+                   - If dist < 100 and > -500: Fade Effect (Passing camera).
+                   - If dist < -500: Hidden.
+                */
                 
-                let opacity = 0;
+                let opacity = 1;
                 let blur = 0;
-                let pointerEvents = 'none';
+                let pointerEvents = 'all'; // Default to interactive
 
-                if (dist > -500 && dist < 3000) { 
-                    // Coming into view (Fade in from 800 to 3000)
-                    if (dist > 800) {
-                        opacity = 1 - ((dist - 800) / 2200); 
-                    } 
-                    // Passing camera (Fade out from -100 to -500)
-                    else if (dist < -100) {
-                        opacity = (dist + 500) / 400; 
-                        blur = Math.abs(dist + 100) / 10;
-                    } 
-                    // SWEET SPOT 
-                    else {
-                        opacity = 1;
-                        pointerEvents = 'all'; 
+                if (dist < 200) {
+                    // It is passing the camera or behind it
+                    // Fade out rapidly as it hits Z=0
+                    if (dist < 0) {
+                        opacity = 1 + (dist / 300); // Fades out by dist = -300
+                        blur = Math.abs(dist) / 10;
+                        pointerEvents = 'none';
                     }
+                } 
+                // Distant fade (optional, to hide things 4000px away)
+                if (dist > 3000) {
+                    opacity = 1 - ((dist - 3000) / 1000);
+                    pointerEvents = 'none';
                 }
 
                 section.style.opacity = Math.max(0, Math.min(1, opacity));
                 
-                if (blur > 0.5) section.style.filter = `blur(${blur}px)`;
+                if (blur > 0) section.style.filter = `blur(${blur}px)`;
                 else section.style.filter = 'none'; 
                 
                 section.style.pointerEvents = pointerEvents;
@@ -452,24 +435,6 @@
 
             requestAnimationFrame(animate);
         }
-
-        // Initialize particles
-        function createParticles() {
-            for(let i=0; i<50; i++) {
-                const p = document.createElement('div');
-                p.classList.add('particle');
-                const x = (Math.random() - 0.5) * window.innerWidth * 2;
-                const y = (Math.random() - 0.5) * window.innerHeight * 2;
-                const z = Math.random() * 6000;
-                const s = Math.random() * 3 + 1; 
-                p.style.width = s + 'px';
-                p.style.height = s + 'px';
-                p.style.transform = `translate3d(${x}px, ${y}px, ${z}px)`;
-                p.style.opacity = Math.random() * 0.5;
-                world.appendChild(p);
-            }
-        }
-        createParticles();
 
         animate();
     </script>
